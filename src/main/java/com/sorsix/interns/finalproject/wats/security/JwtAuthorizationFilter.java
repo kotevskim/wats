@@ -17,9 +17,9 @@ import static com.sorsix.interns.finalproject.wats.security.SecurityConstants.HE
 import static com.sorsix.interns.finalproject.wats.security.SecurityConstants.SECRET;
 import static com.sorsix.interns.finalproject.wats.security.SecurityConstants.TOKEN_PREFIX;
 
-public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
 
@@ -35,7 +35,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }

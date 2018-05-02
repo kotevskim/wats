@@ -10,6 +10,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,39 +38,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @EnableOAuth2Client
-@EnableWebSecurity
-@Configuration
+@EnableWebSecurity(debug = true)
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
-    private final UserDao userDao;
     private final OAuth2ClientContext oauth2ClientContext;
-//    private final AuthenticationSuccessHandler authenticationSuccessHandler;
-//    private final AuthenticationFailureHandler authenticationFailureHandler;
-//    private final LogoutSuccessHandler logoutSuccessHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
-    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final OAuth2SuccessHandler OAuth2SuccessHandler;
 
     @Autowired
-    public WebSecurity(UserDao userDao,
-                       @Qualifier("oauth2ClientContext") OAuth2ClientContext oauth2ClientContext,
+    public WebSecurity(@Qualifier("oauth2ClientContext") OAuth2ClientContext oauth2ClientContext,
                        AuthenticationEntryPoint authenticationEntryPoint,
                        PasswordEncoder passwordEncoder,
-                       UserDetailsService userDetailsService, CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+                       UserDetailsService userDetailsService,
+                       OAuth2SuccessHandler OAuth2SuccessHandler) {
         this.oauth2ClientContext = oauth2ClientContext;
-        this.userDao = userDao;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
-        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+        this.OAuth2SuccessHandler = OAuth2SuccessHandler;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         super.configure(auth);
-        auth.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -77,22 +72,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .cors().and().csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint).and()
-//                .formLogin().loginProcessingUrl("/login").and()
-//                .logout()
-//                    .logoutUrl("/api/logout")
-//                    .logoutSuccessHandler(logoutSuccessHandler)
-//                    .deleteCookies("JSESSIONID").and()
                 .authorizeRequests()
-                    .antMatchers( "/", "/login**", "/login/facebook").permitAll()
-//                    .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-//                    .antMatchers(HttpMethod.POST, "/login").permitAll()
+                    .antMatchers( "/",
+                            "api/login**",
+                            "/api/login/github",
+                            "api/login/github").permitAll()
                     .anyRequest().authenticated().and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .addFilter(new JwtAuthenticationFilter())
+                .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //                .logout().logoutSuccessUrl("/me").and()
-//                .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
     }
 
     @Bean
@@ -125,8 +115,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private Filter ssoFilter() {
         CompositeFilter compositeFilter = new CompositeFilter();
         List<Filter> filters = new ArrayList<>();
-        filters.add(ssoFilter(facebook(), "/login/facebook"));
-        filters.add(ssoFilter(github(), "/login/github"));
+        filters.add(ssoFilter(facebook(), "/api/login/facebook"));
+        filters.add(ssoFilter(github(), "/api/login/github"));
         compositeFilter.setFilters(filters);
         return compositeFilter;
     }
@@ -141,7 +131,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 = new UserInfoTokenServices(client.getResource().getUserInfoUri(), client.getResource().getClientId());
         tokenServices.setRestTemplate(oAuth2RestTemplate);
         oAuth2ClientAuthenticationFilter.setTokenServices(tokenServices);
-        oAuth2ClientAuthenticationFilter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler);
+        oAuth2ClientAuthenticationFilter.setAuthenticationSuccessHandler(OAuth2SuccessHandler);
         return oAuth2ClientAuthenticationFilter;
     }
 }
