@@ -1,15 +1,17 @@
 package com.sorsix.interns.finalproject.wats.api;
 
-import com.sorsix.interns.finalproject.wats.domain.Forum.ForumAnswer;
-import com.sorsix.interns.finalproject.wats.domain.Forum.ForumQuestion;
+import com.sorsix.interns.finalproject.wats.domain.User;
+import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
+import com.sorsix.interns.finalproject.wats.domain.forum.ForumQuestion;
+import com.sorsix.interns.finalproject.wats.service.AuthService;
 import com.sorsix.interns.finalproject.wats.service.ForumService;
+import com.sorsix.interns.finalproject.wats.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Map;
 
@@ -19,10 +21,15 @@ public class ForumController {
     Logger LOGGER = LoggerFactory.getLogger(ForumController.class);
 
     private ForumService forumService;
-
+    private UserService userService;
+    private AuthService authService;
     @Autowired
-    public ForumController(ForumService forumService) {
+    public ForumController(ForumService forumService,
+                           UserService userService,
+                           AuthService authService) {
         this.forumService = forumService;
+        this.userService = userService;
+        this.authService = authService;
     }
 
     @GetMapping(value = "{locationId}/forum/questions")
@@ -39,15 +46,18 @@ public class ForumController {
         return result;
     }
 
-//    @PostMapping(value = "{locationId}/forum/questions/{questionId}/answers")
-//    ForumAnswer postAnswerForQuestion(Authentication authentication,
-//                                      @RequestBody String answer,
-//                                      @PathVariable long locationId,
-//                                      @PathVariable long questionId) {
-//        LOGGER.info("POST: postAnswerForQuestion: id:[{}], answer:[{}]", questionId, answer);
-//        String userIdText = ((Map<String, Object>)authentication.getDetails()).get("userId").toString();
-//        long userId = Long.parseLong(userIdText);
-//        ForumAnswer result = forumService.createAnswerForQuestion(userId, questionId, answer);
-//        return new ForumAnswer();
-//    }
+    @PostMapping(value = "{locationId}/forum/questions/{questionId}/answers")
+    ForumAnswer postAnswerForQuestion(Authentication authentication,
+                                      @RequestBody String answer,
+                                      @PathVariable long locationId,
+                                      @PathVariable long questionId) {
+        LOGGER.info("POST: postAnswerForQuestion: id:[{}], answer:[{}]", questionId, answer);
+
+        long userId = authService.getCurrentUserId().orElseThrow(() -> new RuntimeException());
+
+        User user = userService.findUserById(userId).orElseThrow(() -> new RuntimeException());
+        ForumQuestion forumQuestion = forumService.findQuestionById(questionId).orElseThrow(() -> new RuntimeException());
+        ForumAnswer result = forumService.createAnswerForQuestion(user, forumQuestion, answer);
+        return result;
+    }
 }

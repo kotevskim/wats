@@ -1,29 +1,31 @@
-package com.sorsix.interns.finalproject.wats.domain.Forum;
+package com.sorsix.interns.finalproject.wats.domain.review;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sorsix.interns.finalproject.wats.domain.Location;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sorsix.interns.finalproject.wats.domain.User;
+
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "forum_questions")
-public class ForumQuestion {
+@Table(name = "review_comments")
+public class ReviewComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    private Timestamp date_published;
+    private Timestamp datePublished;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToOne
-    @JoinColumn(name = "location_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
     @JsonIgnore
-    private Location location;
+    private Review review;
 
-    public ForumQuestion() {}
+    public ReviewComment() {}
 
     public Long getId() {
         return id;
@@ -41,12 +43,12 @@ public class ForumQuestion {
         this.description = description;
     }
 
-    public Timestamp getDate_published() {
-        return date_published;
+    public Timestamp getDatePublished() {
+        return datePublished;
     }
 
-    public void setDate_published(Timestamp date_published) {
-        this.date_published = date_published;
+    public void setDatePublished(Timestamp datePublished) {
+        this.datePublished = datePublished;
     }
 
     public User getUser() {
@@ -57,11 +59,11 @@ public class ForumQuestion {
         this.user = user;
     }
 
-    public Location getLocation() {
-        return location;
+    public Review getReview() {
+        return review;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setReview(Review review) {
+        this.review = review;
     }
 }

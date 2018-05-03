@@ -1,4 +1,4 @@
-package com.sorsix.interns.finalproject.wats.domain.Forum;
+package com.sorsix.interns.finalproject.wats.domain.forum;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sorsix.interns.finalproject.wats.domain.User;
@@ -35,10 +35,11 @@ public class ForumAnswer {
 
     public ForumAnswer() {}
 
-    public ForumAnswer(User user, String description) {
+    public ForumAnswer(User user, ForumQuestion forumQuestion,String description) {
         this.description = description;
         this.datePublished = LocalDateTime.now();
         this.user = user;
+        this.forumQuestion = forumQuestion;
     }
 
     public Long getId() {

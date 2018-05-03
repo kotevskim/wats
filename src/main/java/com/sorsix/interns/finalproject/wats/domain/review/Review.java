@@ -1,4 +1,4 @@
-package com.sorsix.interns.finalproject.wats.domain.Review;
+package com.sorsix.interns.finalproject.wats.domain.review;
 
 import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
@@ -23,15 +23,16 @@ public class Review {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @ManyToMany(cascade = { CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "review_likes",
             joinColumns = {@JoinColumn(name = "review_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
-            )
+    )
     Set<User> likes = new HashSet<>();
 
-    public Review() {}
+    public Review() {
+    }
 
     public Long getId() {
         return id;

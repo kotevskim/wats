@@ -1,6 +1,6 @@
 package com.sorsix.interns.finalproject.wats.persistence;
 
-import com.sorsix.interns.finalproject.wats.domain.Forum.ForumAnswer;
+import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

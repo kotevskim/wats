@@ -1,26 +1,29 @@
-package com.sorsix.interns.finalproject.wats.domain.Review;
+package com.sorsix.interns.finalproject.wats.domain.forum;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "review_comments")
-public class ReviewComment {
+@Table(name = "forum_questions")
+public class ForumQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    private Timestamp datePublished;
+    private Timestamp date_published;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
-    @JoinColumn(name = "review_id")
-    private Review review;
+    @JoinColumn(name = "location_id")
+    @JsonIgnore
+    private Location location;
 
-    public ReviewComment() {}
+    public ForumQuestion() {}
 
     public Long getId() {
         return id;
@@ -38,12 +41,12 @@ public class ReviewComment {
         this.description = description;
     }
 
-    public Timestamp getDatePublished() {
-        return datePublished;
+    public Timestamp getDate_published() {
+        return date_published;
     }
 
-    public void setDatePublished(Timestamp datePublished) {
-        this.datePublished = datePublished;
+    public void setDate_published(Timestamp date_published) {
+        this.date_published = date_published;
     }
 
     public User getUser() {
@@ -54,11 +57,11 @@ public class ReviewComment {
         this.user = user;
     }
 
-    public Review getReview() {
-        return review;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setReview(Review review) {
-        this.review = review;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

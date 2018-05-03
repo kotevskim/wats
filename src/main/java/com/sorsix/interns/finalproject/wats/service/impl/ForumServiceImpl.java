@@ -1,22 +1,20 @@
-package com.sorsix.interns.finalproject.wats.service;
+package com.sorsix.interns.finalproject.wats.service.impl;
 
-import com.sorsix.interns.finalproject.wats.domain.Forum.ForumAnswer;
-import com.sorsix.interns.finalproject.wats.domain.Forum.ForumQuestion;
 import com.sorsix.interns.finalproject.wats.domain.User;
+import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
+import com.sorsix.interns.finalproject.wats.domain.forum.ForumQuestion;
 import com.sorsix.interns.finalproject.wats.persistence.ForumAnswerDAO;
 import com.sorsix.interns.finalproject.wats.persistence.ForumQuestionsDAO;
 import com.sorsix.interns.finalproject.wats.persistence.UserDao;
-import org.dom4j.util.UserDataDocumentFactory;
+import com.sorsix.interns.finalproject.wats.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.jws.soap.SOAPBinding;
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Optional;
 
 @Service
-public class ForumServiceImpl implements ForumService{
+public class ForumServiceImpl implements ForumService {
 
     private ForumQuestionsDAO forumQuestionsDAO;
     private ForumAnswerDAO forumAnswerDAO;
@@ -42,8 +40,16 @@ public class ForumServiceImpl implements ForumService{
         return result;
     }
 
-//    @Override
-//    public ForumAnswer createAnswerForQuestion(long userId, long questionId, String text) {
-//        return answer;
-//    }
+    @Override
+    public ForumAnswer createAnswerForQuestion(User user, ForumQuestion forumQuestion, String answer) {
+        ForumAnswer forumAnswer = new ForumAnswer(user, forumQuestion, answer);
+        return forumAnswerDAO.save(forumAnswer);
+    }
+
+    @Override
+    public Optional<ForumQuestion> findQuestionById(long questionId) {
+        return forumQuestionsDAO.findById(questionId);
+    }
+
+
 }
