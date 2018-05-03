@@ -76,7 +76,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                         "/api/login",
                         "api/login/github",
                         "/api/locations/**",
-                        "/proba/meth").permitAll()
+                        "/proba/meth",
+                        "/api/test").permitAll()
                 .anyRequest().authenticated();
 
         JwtUsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter
