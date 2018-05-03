@@ -76,7 +76,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers( "/",
                         "api/login**",
                         "/api/login/github",
-                        "api/login/github").permitAll()
+                        "api/login/github",
+                        "/api/locations/**",
+                        "/proba/meth").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilter(new JwtUsernamePasswordAuthenticationFilter(jwtUtil, userDao))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil))
