@@ -8,6 +8,9 @@ import com.sorsix.interns.finalproject.wats.persistence.ForumQuestionsDAO;
 import com.sorsix.interns.finalproject.wats.persistence.UserDao;
 import com.sorsix.interns.finalproject.wats.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -29,8 +32,8 @@ public class ForumServiceImpl implements ForumService {
     }
 
     @Override
-    public Collection<ForumQuestion> getQuestionsForLocation(long locationId) {
-        Collection<ForumQuestion> result = forumQuestionsDAO.findByLocationId(locationId);
+    public Page<ForumQuestion> getQuestionsForLocation(long locationId, Pageable pageable) {
+        Page<ForumQuestion> result = forumQuestionsDAO.findByLocationId(locationId, pageable);
         return result;
     }
 

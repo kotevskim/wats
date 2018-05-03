@@ -9,6 +9,8 @@ import com.sorsix.interns.finalproject.wats.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +35,10 @@ public class ForumController {
     }
 
     @GetMapping(value = "{locationId}/forum/questions")
-    Collection<ForumQuestion> getQuestionsForLocation(@PathVariable int locationId){
+    Page<ForumQuestion> getQuestionsForLocation(@PathVariable int locationId,
+                                                      Pageable pageable){
         LOGGER.info("GET: getPageReviews: [{}]", locationId);
-        Collection<ForumQuestion> result = forumService.getQuestionsForLocation(locationId);
+        Page<ForumQuestion> result = forumService.getQuestionsForLocation(locationId, pageable);
         return result;
     }
 
