@@ -10,7 +10,6 @@ public class Identity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ssoId;
     private String provider;
-
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;

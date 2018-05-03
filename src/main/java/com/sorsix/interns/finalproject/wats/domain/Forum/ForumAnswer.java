@@ -12,7 +12,7 @@ import java.util.Set;
 public class ForumAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long forumAnswerId;
+    private Long id;
     private String description;
     private Timestamp datePublished;
     @ManyToOne
@@ -32,12 +32,12 @@ public class ForumAnswer {
 
     public ForumAnswer() {}
 
-    public Long getForumAnswerId() {
-        return forumAnswerId;
+    public Long getId() {
+        return id;
     }
 
-    public void setForumAnswerId(Long forumAnswerId) {
-        this.forumAnswerId = forumAnswerId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescription() {

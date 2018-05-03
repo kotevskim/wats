@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 public class ReviewComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewCommentId;
+    private Long id;
     private String description;
     private Timestamp datePublished;
     @ManyToOne
@@ -22,12 +22,12 @@ public class ReviewComment {
 
     public ReviewComment() {}
 
-    public Long getReviewCommentId() {
-        return reviewCommentId;
+    public Long getId() {
+        return id;
     }
 
-    public void setReviewCommentId(Long reviewCommentId) {
-        this.reviewCommentId = reviewCommentId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescription() {

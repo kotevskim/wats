@@ -10,19 +10,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "person_id")
     private Long id;
-
     private String name;
-
-    @Column(name = "email")
+    private String email;
     private String username;
-
     @JsonIgnore
     private String password;
-
     private String pictureUrl;
-
     @ManyToOne()
     @JoinColumn(name = "current_location")
     private Location currentLocation;
@@ -30,9 +24,9 @@ public class User {
     // JPA only
     public User() { }
 
-    public User(String name, String username, String password) {
+    public User(String name, String email, String password) {
         this.name = name;
-        this.username = username;
+        this.email = email;
         this.password = password;
     }
 
@@ -52,12 +46,12 @@ public class User {
         this.name = name;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -84,4 +78,11 @@ public class User {
         this.currentLocation = currentLocation;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

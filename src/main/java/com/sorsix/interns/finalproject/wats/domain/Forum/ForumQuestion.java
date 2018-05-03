@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 public class ForumQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long forumQuestionId;
+    private Long id;
     private String description;
     private Timestamp date_published;
     @ManyToOne
@@ -23,12 +23,12 @@ public class ForumQuestion {
 
     public ForumQuestion() {}
 
-    public Long getForumQuestionId() {
-        return forumQuestionId;
+    public Long getId() {
+        return id;
     }
 
-    public void setForumQuestionId(Long forumQuestionId) {
-        this.forumQuestionId = forumQuestionId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescription() {

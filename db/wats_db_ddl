@@ -1,0 +1,64 @@
+CREATE TABLE "locations" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "name" varchar(30)
+);
+
+CREATE TABLE "users" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "name" varchar,
+  "username" varchar(15),
+  "email" varchar,
+  "password" varchar,
+  "picture_url" varchar,
+  "current_location" BIGINT REFERENCES "locations"(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE "identities" (
+  "sso_id" bigserial,
+  "provider" varchar,
+  "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE "reviews" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "description" VARCHAR,
+  "date_published" TIMESTAMP WITHOUT TIME ZONE,
+  "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
+  "location_id" BIGINT REFERENCES "locations"(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE "review_comments" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "description" VARCHAR,
+  "date_published" TIMESTAMP WITHOUT TIME ZONE,
+  "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
+  "review_id" BIGINT REFERENCES "reviews"(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE "review_likes" (
+  "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
+  "review_id" BIGINT REFERENCES "reviews"(id) ON DELETE SET NULL ON UPDATE CASCADE,
+  PRIMARY KEY("user_id", "review_id")
+);
+
+CREATE TABLE "forum_questions" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "description" VARCHAR,
+  "date_published" TIMESTAMP WITHOUT TIME ZONE,
+  "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
+  "location_id" BIGINT REFERENCES "locations"(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE "forum_answers" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "description" VARCHAR,
+  "date_published" TIMESTAMP WITHOUT TIME ZONE,
+  "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
+  "forum_question_id" BIGINT REFERENCES "forum_questions"(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE "forum_answer_likes" (
+  "user_id" BIGINT REFERENCES "users" ON DELETE SET NULL ON UPDATE CASCADE,
+  "forum_answer_id" BIGINT REFERENCES "forum_answers"(id) ON DELETE SET NULL ON UPDATE CASCADE,
+  PRIMARY KEY("user_id", "forum_answer_id")
+);
