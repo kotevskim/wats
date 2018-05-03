@@ -1,9 +1,11 @@
 package com.sorsix.interns.finalproject.wats.domain.Forum;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sorsix.interns.finalproject.wats.domain.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,12 +16,13 @@ public class ForumAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    private Timestamp datePublished;
+    private LocalDateTime datePublished;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
     @JoinColumn(name = "forum_question_id")
+    @JsonIgnore
     private ForumQuestion forumQuestion;
 
     @ManyToMany(cascade = { CascadeType.ALL })
@@ -31,6 +34,12 @@ public class ForumAnswer {
     Set<User> likes = new HashSet<>();
 
     public ForumAnswer() {}
+
+    public ForumAnswer(User user, String description) {
+        this.description = description;
+        this.datePublished = LocalDateTime.now();
+        this.user = user;
+    }
 
     public Long getId() {
         return id;
@@ -48,11 +57,11 @@ public class ForumAnswer {
         this.description = description;
     }
 
-    public Timestamp getDatePublished() {
+    public LocalDateTime getDatePublished() {
         return datePublished;
     }
 
-    public void setDatePublished(Timestamp datePublished) {
+    public void setDatePublished(LocalDateTime datePublished) {
         this.datePublished = datePublished;
     }
 

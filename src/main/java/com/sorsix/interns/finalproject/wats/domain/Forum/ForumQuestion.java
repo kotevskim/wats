@@ -1,5 +1,6 @@
 package com.sorsix.interns.finalproject.wats.domain.Forum;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
 
@@ -19,6 +20,7 @@ public class ForumQuestion {
     private User user;
     @ManyToOne
     @JoinColumn(name = "location_id")
+    @JsonIgnore
     private Location location;
 
     public ForumQuestion() {}
