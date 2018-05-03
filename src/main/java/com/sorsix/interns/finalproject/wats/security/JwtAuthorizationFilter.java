@@ -45,16 +45,18 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if (token != null) {
             token = jwtUtil.clearPrefix(token);
             Map<String, java.lang.Object> tokenClaims = jwtUtil.parseToken(token);
-            String username = tokenClaims.get("sub").toString(); // get token subject (username)
-            if (username != null) {
-                Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) tokenClaims.get("userAuthorities");
-                AbstractAuthenticationToken authentication
-                        = new UsernamePasswordAuthenticationToken(username, null, authorities);
-                Map<String, java.lang.Object> details = new HashMap<>();
-                String userId = tokenClaims.getOrDefault("userId", "N/A").toString();
-                details.put("userId", userId);
-                authentication.setDetails(details);
-                return authentication;
+            if (tokenClaims != null) {
+                String username = (String) tokenClaims.get("sub"); // get token subject (username)
+                if (username != null) {
+                    Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) tokenClaims.get("userAuthorities");
+                    AbstractAuthenticationToken authentication
+                            = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    Map<String, java.lang.Object> details = new HashMap<>();
+                    String userId = tokenClaims.getOrDefault("userId", "N/A").toString();
+                    details.put("userId", userId);
+                    authentication.setDetails(details);
+                    return authentication;
+                }
             }
             return null;
         }

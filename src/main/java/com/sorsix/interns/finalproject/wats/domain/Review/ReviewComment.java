@@ -7,10 +7,10 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "review_comments")
-public class ReviewComments {
+public class ReviewComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewCommentId;
+    private Long id;
     private String description;
     private Timestamp datePublished;
     @ManyToOne
@@ -20,14 +20,14 @@ public class ReviewComments {
     @JoinColumn(name = "review_id")
     private Review review;
 
-    public ReviewComments() {}
+    public ReviewComment() {}
 
-    public Long getReviewCommentId() {
-        return reviewCommentId;
+    public Long getId() {
+        return id;
     }
 
-    public void setReviewCommentId(Long reviewCommentId) {
-        this.reviewCommentId = reviewCommentId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescription() {

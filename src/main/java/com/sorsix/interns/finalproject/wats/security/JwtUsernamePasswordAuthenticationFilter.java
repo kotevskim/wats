@@ -6,6 +6,7 @@ import com.sorsix.interns.finalproject.wats.domain.UserCredentials;
 import com.sorsix.interns.finalproject.wats.persistence.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -27,10 +28,14 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
 
     private final JwtUtil jwtUtil;
     private final UserDao userDao;
+    private final AuthenticationManager authenticationManager;
 
-    public JwtUsernamePasswordAuthenticationFilter(JwtUtil jwtUtil, UserDao userDao) {
+    public JwtUsernamePasswordAuthenticationFilter(JwtUtil jwtUtil,
+                                                   UserDao userDao,
+                                                   AuthenticationManager authenticationManager) {
         this.jwtUtil = jwtUtil;
         this.userDao = userDao;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -42,7 +47,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
                     credentials.username,
                     credentials.password,
                     new ArrayList<>());
-            return this.getAuthenticationManager().authenticate(authRequest);
+            return authenticationManager.authenticate(authRequest);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -62,6 +67,13 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         tokenClaims.put("userAuthorities", new ArrayList<GrantedAuthority>());
         String token = jwtUtil.generateToken(tokenClaims);
         res.addHeader(jwtUtil.getHeaderString(), jwtUtil.getTokenPrefix() + token);
+        ObjectMapper mapper = new ObjectMapper();
+        res.getWriter().write(mapper.writeValueAsString(user));
         LOGGER.info("Authentication successful for user {}", user.getUsername());
+    }
+
+    @Override
+    public void setFilterProcessesUrl(String filterProcessesUrl) {
+        super.setFilterProcessesUrl(filterProcessesUrl);
     }
 }

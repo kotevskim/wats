@@ -13,7 +13,7 @@ import java.util.Set;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewId;
+    private Long id;
     private String description;
     private Timestamp datePublished;
     @ManyToOne
@@ -33,12 +33,12 @@ public class Review {
 
     public Review() {}
 
-    public Long getReviewId() {
-        return reviewId;
+    public Long getId() {
+        return id;
     }
 
-    public void setReviewId(Long reviewId) {
-        this.reviewId = reviewId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescription() {
