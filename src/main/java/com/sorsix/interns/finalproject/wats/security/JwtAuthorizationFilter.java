@@ -46,12 +46,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             token = jwtUtil.clearPrefix(token);
             Map<String, java.lang.Object> tokenClaims = jwtUtil.parseToken(token);
             String username = tokenClaims.get("sub").toString(); // get token subject (username)
-            String userId = tokenClaims.get("userId").toString();
-            Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) tokenClaims.get("userAuthorities");
             if (username != null) {
+                Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) tokenClaims.get("userAuthorities");
                 AbstractAuthenticationToken authentication
                         = new UsernamePasswordAuthenticationToken(username, null, authorities);
                 Map<String, java.lang.Object> details = new HashMap<>();
+                String userId = tokenClaims.getOrDefault("userId", "N/A").toString();
                 details.put("userId", userId);
                 authentication.setDetails(details);
                 return authentication;
