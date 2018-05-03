@@ -3,17 +3,16 @@ package com.sorsix.interns.finalproject.wats.api;
 import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
 import com.sorsix.interns.finalproject.wats.domain.forum.ForumQuestion;
-import com.sorsix.interns.finalproject.wats.service.AuthService;
 import com.sorsix.interns.finalproject.wats.service.ForumService;
 import com.sorsix.interns.finalproject.wats.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/locations")
@@ -22,14 +21,11 @@ public class ForumController {
 
     private ForumService forumService;
     private UserService userService;
-    private AuthService authService;
     @Autowired
     public ForumController(ForumService forumService,
-                           UserService userService,
-                           AuthService authService) {
+                           UserService userService) {
         this.forumService = forumService;
         this.userService = userService;
-        this.authService = authService;
     }
 
     @GetMapping(value = "{locationId}/forum/questions")
@@ -53,9 +49,8 @@ public class ForumController {
                                       @PathVariable long questionId) {
         LOGGER.info("POST: postAnswerForQuestion: id:[{}], answer:[{}]", questionId, answer);
 
-        long userId = authService.getCurrentUserId().orElseThrow(() -> new RuntimeException());
-
-        User user = userService.findUserById(userId).orElseThrow(() -> new RuntimeException());
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        User user = userService.findUserById(userId).get();
         ForumQuestion forumQuestion = forumService.findQuestionById(questionId).orElseThrow(() -> new RuntimeException());
         ForumAnswer result = forumService.createAnswerForQuestion(user, forumQuestion, answer);
         return result;

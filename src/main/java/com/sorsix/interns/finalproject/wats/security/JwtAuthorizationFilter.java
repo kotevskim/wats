@@ -1,5 +1,6 @@
 package com.sorsix.interns.finalproject.wats.security;
 
+import com.sorsix.interns.finalproject.wats.persistence.UserDao;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,16 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final JwtUtil jwtUtil;
+    private final UserDao userDao;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDao userDao) {
         super(authenticationManager);
         this.jwtUtil = jwtUtil;
+        this.userDao = userDao;
     }
 
     @Override
@@ -51,10 +53,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) tokenClaims.get("userAuthorities");
                     AbstractAuthenticationToken authentication
                             = new UsernamePasswordAuthenticationToken(username, null, authorities);
-                    Map<String, java.lang.Object> details = new HashMap<>();
-                    String userId = tokenClaims.getOrDefault("userId", "N/A").toString();
-                    details.put("userId", userId);
-                    authentication.setDetails(details);
+                    Long userId = Long.parseLong(tokenClaims.get("userId").toString());
+                    authentication.setDetails(userId);
                     return authentication;
                 }
             }

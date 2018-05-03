@@ -5,6 +5,7 @@ import com.sorsix.interns.finalproject.wats.domain.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    private Timestamp datePublished;
+    private LocalDateTime datePublished;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -34,6 +35,13 @@ public class Review {
     public Review() {
     }
 
+    public Review(String description, LocalDateTime datePublished, User user, Location location) {
+        this.description = description;
+        this.datePublished = datePublished;
+        this.user = user;
+        this.location = location;
+    }
+
     public Long getId() {
         return id;
     }
@@ -50,11 +58,11 @@ public class Review {
         this.description = description;
     }
 
-    public Timestamp getDatePublished() {
+    public LocalDateTime getDatePublished() {
         return datePublished;
     }
 
-    public void setDatePublished(Timestamp datePublished) {
+    public void setDatePublished(LocalDateTime datePublished) {
         this.datePublished = datePublished;
     }
 
