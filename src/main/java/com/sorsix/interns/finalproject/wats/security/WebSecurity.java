@@ -82,7 +82,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .antMatchers(HttpMethod.POST, "/api/locations/**").authenticated().and()
                 .addFilter(new JwtUsernamePasswordAuthenticationFilter("/api/login", jwtUtil, userDao, authenticationManager()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDao))
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //                .logout().logoutSuccessUrl("/me").and()

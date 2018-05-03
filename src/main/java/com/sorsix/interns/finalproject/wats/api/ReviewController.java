@@ -2,6 +2,7 @@ package com.sorsix.interns.finalproject.wats.api;
 
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
+import com.sorsix.interns.finalproject.wats.domain.review.ReviewDto;
 import com.sorsix.interns.finalproject.wats.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,4 +33,10 @@ public class ReviewController {
         return reviewService.getReviewComments(reviewId);
     }
 
+    @PostMapping("{locationId}/reviews")
+    public Review postReview(@RequestBody ReviewDto reviewDto) {
+        return reviewService.convertToReview(reviewDto)
+                .map(review -> reviewService.createReview(review))
+                .orElseThrow(() -> new RuntimeException("cannot convert"));
+    }
 }
