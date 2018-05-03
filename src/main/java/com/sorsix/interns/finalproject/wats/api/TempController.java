@@ -3,9 +3,17 @@ package com.sorsix.interns.finalproject.wats.api;
 import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +39,8 @@ public class TempController {
 
     @GetMapping(value = "test")
     @ResponseBody
-    public String test() {
-//        userDao.save(new User("Kosta", "koki96", passwordEncoder.encode("kostadin")));
-        String tmp = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        return tmp;
+    public User test() {
+        return userDao.save(new User("Kosta", "koki96", passwordEncoder.encode("kostadin")));
+//        String tmp = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     }
 }

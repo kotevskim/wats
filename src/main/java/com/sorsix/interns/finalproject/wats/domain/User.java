@@ -27,7 +27,6 @@ public class User {
     @JoinColumn(name = "current_location")
     private Location currentLocation;
 
-
     // JPA only
     public User() { }
 

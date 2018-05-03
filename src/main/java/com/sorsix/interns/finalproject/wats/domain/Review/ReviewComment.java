@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "review_comments")
-public class ReviewComments {
+public class ReviewComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewCommentId;
@@ -20,7 +20,7 @@ public class ReviewComments {
     @JoinColumn(name = "review_id")
     private Review review;
 
-    public ReviewComments() {}
+    public ReviewComment() {}
 
     public Long getReviewCommentId() {
         return reviewCommentId;

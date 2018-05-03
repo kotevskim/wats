@@ -13,9 +13,9 @@ import java.util.Map;
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private static String secret;
+    private String secret;
     @Value("${jwt.expirationTime}")
-    private String expirationTime;
+    private Long expirationTime;
     @Value("${jwt.tokenPrefix}")
     private String tokenPrefix;
     @Value("${jwt.headerString}")
@@ -66,7 +66,7 @@ public class JwtUtil {
         return secret;
     }
 
-    public String getExpirationTime() {
+    public Long getExpirationTime() {
         return expirationTime;
     }
 
