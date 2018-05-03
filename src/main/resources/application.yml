@@ -38,3 +38,10 @@ github:
     clientAuthenticationScheme: form
   resource:
     userInfoUri: https://api.github.com/user
+
+# JWT properties
+jwt:
+  secret: WatsKostaKoteSecretKeyToGenJWTs
+  expirationTime: 864_000_000 # 10 days
+  tokenPrefix: "Bearer "
+  headerString: Authorization

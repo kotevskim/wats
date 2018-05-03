@@ -1,15 +1,15 @@
 package com.sorsix.interns.finalproject.wats.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.domain.UserCredentials;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.sorsix.interns.finalproject.wats.persistence.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -18,13 +18,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.sorsix.interns.finalproject.wats.security.SecurityConstants.*;
+public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    static final Logger LOGGER = LoggerFactory.getLogger(JwtUsernamePasswordAuthenticationFilter.class);
 
-    static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private final JwtUtil jwtUtil;
+    private final UserDao userDao;
+
+    public JwtUsernamePasswordAuthenticationFilter(JwtUtil jwtUtil, UserDao userDao) {
+        this.jwtUtil = jwtUtil;
+        this.userDao = userDao;
+    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -46,17 +53,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
-        User user = (User) auth.getPrincipal();
-        LOGGER.info("Authentication success for user {}", user.getUsername());
-        String token = generateJwtToken(user.getUsername());
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
-    }
-
-    private String generateJwtToken(String subject) {
-        return Jwts.builder()
-                .setSubject(subject)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
-                .compact();
+        org.springframework.security.core.userdetails.User coreUser
+                = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+        User user = userDao.findByUsername(coreUser.getUsername()).get();
+        Map<String, Object> tokenClaims = new HashMap<>();
+        tokenClaims.put("sub", user.getUsername()); // sets token's subject
+        tokenClaims.put("userId", user.getId());
+        tokenClaims.put("userAuthorities", new ArrayList<GrantedAuthority>());
+        String token = jwtUtil.generateToken(tokenClaims);
+        res.addHeader(jwtUtil.getHeaderString(), jwtUtil.getTokenPrefix() + token);
+        LOGGER.info("Authentication successful for user {}", user.getUsername());
     }
 }

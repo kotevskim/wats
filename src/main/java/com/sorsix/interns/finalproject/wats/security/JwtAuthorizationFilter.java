@@ -1,8 +1,10 @@
 package com.sorsix.interns.finalproject.wats.security;
 
-import io.jsonwebtoken.Jwts;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -11,46 +13,48 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-
-import static com.sorsix.interns.finalproject.wats.security.SecurityConstants.HEADER_STRING;
-import static com.sorsix.interns.finalproject.wats.security.SecurityConstants.SECRET;
-import static com.sorsix.interns.finalproject.wats.security.SecurityConstants.TOKEN_PREFIX;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+    private final JwtUtil jwtUtil;
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         super(authenticationManager);
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
-        String header = req.getHeader(HEADER_STRING);
-
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+        String header = req.getHeader(jwtUtil.getHeaderString());
+        if (header == null || !header.startsWith(jwtUtil.getTokenPrefix())) {
             chain.doFilter(req, res);
             return;
         }
-
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+        Authentication authentication = getAuthentication(req);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(HEADER_STRING);
+    private Authentication getAuthentication(HttpServletRequest request) {
+        String token = request.getHeader(jwtUtil.getHeaderString());
         if (token != null) {
-            // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(SECRET.getBytes())
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                    .getBody()
-                    .getSubject();
-
-            if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+            token = jwtUtil.clearPrefix(token);
+            Map<String, java.lang.Object> tokenClaims = jwtUtil.parseToken(token);
+            String username = tokenClaims.get("sub").toString(); // get token subject (username)
+            String userId = tokenClaims.get("userId").toString();
+            Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) tokenClaims.get("userAuthorities");
+            if (username != null) {
+                AbstractAuthenticationToken authentication
+                        = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                Map<String, java.lang.Object> details = new HashMap<>();
+                details.put("userId", userId);
+                authentication.setDetails(details);
+                return authentication;
             }
             return null;
         }
