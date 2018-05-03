@@ -12,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -72,20 +73,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint()).and()
                 .authorizeRequests()
-                .antMatchers("/",
+                .antMatchers(HttpMethod.GET,
                         "/api/login",
                         "api/login/github",
                         "/api/locations/**",
-                        "/proba/meth",
+                        "/api/forum/**",
                         "/api/test").permitAll()
-                .anyRequest().authenticated();
-
-        JwtUsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter
-                = new JwtUsernamePasswordAuthenticationFilter(jwtUtil, userDao, authenticationManager());
-        usernamePasswordAuthenticationFilter.setFilterProcessesUrl("/api/login");
-
-        http
-                .addFilter(usernamePasswordAuthenticationFilter)
+                        .anyRequest().authenticated()
+                        .antMatchers(HttpMethod.POST, "/api/locations/**").authenticated().and()
+                .addFilter(new JwtUsernamePasswordAuthenticationFilter("/api/login", jwtUtil, userDao, authenticationManager()))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil))
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -30,9 +30,11 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
     private final UserDao userDao;
     private final AuthenticationManager authenticationManager;
 
-    public JwtUsernamePasswordAuthenticationFilter(JwtUtil jwtUtil,
+    public JwtUsernamePasswordAuthenticationFilter(String filterProcessesUrl,
+                                                   JwtUtil jwtUtil,
                                                    UserDao userDao,
                                                    AuthenticationManager authenticationManager) {
+        super.setFilterProcessesUrl(filterProcessesUrl);
         this.jwtUtil = jwtUtil;
         this.userDao = userDao;
         this.authenticationManager = authenticationManager;
@@ -71,9 +73,9 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         res.getWriter().write(mapper.writeValueAsString(user));
         LOGGER.info("Authentication successful for user {}", user.getUsername());
     }
-
-    @Override
-    public void setFilterProcessesUrl(String filterProcessesUrl) {
-        super.setFilterProcessesUrl(filterProcessesUrl);
-    }
+//
+//    @Override
+//    public void setFilterProcessesUrl(String filterProcessesUrl) {
+//        super.setFilterProcessesUrl(filterProcessesUrl);
+//    }
 }

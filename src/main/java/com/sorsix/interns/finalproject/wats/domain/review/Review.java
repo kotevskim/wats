@@ -1,5 +1,6 @@
-package com.sorsix.interns.finalproject.wats.domain.Forum;
+package com.sorsix.interns.finalproject.wats.domain.review;
 
+import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
 
 import javax.persistence.*;
@@ -8,8 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "forum_answers")
-public class ForumAnswer {
+@Table(name = "reviews")
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,18 +20,19 @@ public class ForumAnswer {
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
-    @JoinColumn(name = "forum_question_id")
-    private ForumQuestion forumQuestion;
+    @JoinColumn(name = "location_id")
+    private Location location;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
-            name = "forum_answer_likes",
-            joinColumns = { @JoinColumn(name = "forum_answer_id") },
-            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+            name = "review_likes",
+            joinColumns = {@JoinColumn(name = "review_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     Set<User> likes = new HashSet<>();
 
-    public ForumAnswer() {}
+    public Review() {
+    }
 
     public Long getId() {
         return id;
@@ -64,11 +66,11 @@ public class ForumAnswer {
         this.user = user;
     }
 
-    public ForumQuestion getForumQuestion() {
-        return forumQuestion;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setForumQuestion(ForumQuestion forumQuestion) {
-        this.forumQuestion = forumQuestion;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }
