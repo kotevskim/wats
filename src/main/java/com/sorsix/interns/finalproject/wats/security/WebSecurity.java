@@ -38,7 +38,6 @@ import org.springframework.web.filter.CompositeFilter;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,14 +72,19 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint()).and()
                 .authorizeRequests()
-                .antMatchers( "/",
-                        "api/login**",
-                        "/api/login/github",
+                .antMatchers("/",
+                        "/api/login",
                         "api/login/github",
                         "/api/locations/**",
                         "/proba/meth").permitAll()
-                .anyRequest().authenticated().and()
-                .addFilter(new JwtUsernamePasswordAuthenticationFilter(jwtUtil, userDao))
+                .anyRequest().authenticated();
+
+        JwtUsernamePasswordAuthenticationFilter usernamePasswordAuthenticationFilter
+                = new JwtUsernamePasswordAuthenticationFilter(jwtUtil, userDao, authenticationManager());
+        usernamePasswordAuthenticationFilter.setFilterProcessesUrl("/api/login");
+
+        http
+                .addFilter(usernamePasswordAuthenticationFilter)
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil))
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -93,6 +97,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
     }
 
+    @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
             User user = userDao.findByUsername(username)
