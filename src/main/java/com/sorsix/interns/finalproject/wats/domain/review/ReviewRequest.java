@@ -2,7 +2,7 @@ package com.sorsix.interns.finalproject.wats.domain.review;
 
 import java.time.LocalDateTime;
 
-public class ReviewDto {
+public class ReviewRequest {
     private String description;
     private LocalDateTime datePublished;
     private Long locationId;

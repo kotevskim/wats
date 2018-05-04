@@ -1,11 +1,9 @@
 package com.sorsix.interns.finalproject.wats.service;
 
-import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
-import com.sorsix.interns.finalproject.wats.domain.review.ReviewDto;
-import com.sorsix.interns.finalproject.wats.persistence.ReviewDao;
+import com.sorsix.interns.finalproject.wats.domain.review.ReviewRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,7 +16,5 @@ public interface ReviewService {
 
     Collection<ReviewComment> getReviewComments(Long reviewId);
 
-    Review createReview(Review review);
-
-    Optional<Review> convertToReview(ReviewDto reviewDto);
+    Optional<Review> createReview(ReviewRequest reviewRequest, User user);
 }

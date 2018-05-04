@@ -1,12 +1,16 @@
 package com.sorsix.interns.finalproject.wats.api;
 
+import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
-import com.sorsix.interns.finalproject.wats.domain.review.ReviewDto;
+import com.sorsix.interns.finalproject.wats.domain.review.ReviewRequest;
+import com.sorsix.interns.finalproject.wats.service.AuthenticationService;
 import com.sorsix.interns.finalproject.wats.service.ReviewService;
+import com.sorsix.interns.finalproject.wats.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -16,14 +20,22 @@ import java.util.Collection;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final AuthenticationService authenticationService;
+    private final UserService userService;
 
     @Autowired
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService,
+                            AuthenticationService authenticationService,
+                            UserService userService) {
         this.reviewService = reviewService;
+        this.authenticationService = authenticationService;
+        this.userService = userService;
     }
 
     @GetMapping("{locationId}/reviews")
-    public Page<Review> getReviewsByLocation(@PathVariable Long locationId, Pageable pageable) {
+    public Page<Review> getReviewsByLocation(@PathVariable Long locationId,
+                                             Pageable pageable,
+                                             Sort sort) {
         return reviewService.getReviewsForLocation(locationId, pageable);
     }
 
@@ -34,9 +46,9 @@ public class ReviewController {
     }
 
     @PostMapping("{locationId}/reviews")
-    public Review postReview(@RequestBody ReviewDto reviewDto) {
-        return reviewService.convertToReview(reviewDto)
-                .map(review -> reviewService.createReview(review))
-                .orElseThrow(() -> new RuntimeException("cannot convert"));
+    public Review postReview(@RequestBody ReviewRequest reviewRequest) {
+        User user = authenticationService.getUser();
+        return reviewService.createReview(reviewRequest, user)
+                .orElseThrow(() -> new RuntimeException("cannot create review"));
     }
 }

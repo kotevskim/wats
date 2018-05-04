@@ -3,6 +3,7 @@ package com.sorsix.interns.finalproject.wats.persistence;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;

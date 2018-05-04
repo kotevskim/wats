@@ -15,7 +15,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final ReviewDao reviewDao;
-    private UserDao userDao;
+    private final UserDao userDao;
 
     @Autowired
     public UserServiceImpl(ReviewDao reviewDao, UserDao userDao) {
@@ -31,5 +31,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findUserById(long userId) {
         return userDao.findById(userId);
+    }
+
+    @Override
+    public Optional<User> findUserByUsername(String username) {
+        return userDao.findByUsername(username);
     }
 }
