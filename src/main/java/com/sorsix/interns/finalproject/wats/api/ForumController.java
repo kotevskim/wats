@@ -5,11 +5,11 @@ import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
 import com.sorsix.interns.finalproject.wats.domain.forum.ForumQuestion;
 import com.sorsix.interns.finalproject.wats.service.ForumService;
 import com.sorsix.interns.finalproject.wats.service.UserService;
+import org.hibernate.query.QueryParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +32,10 @@ public class ForumController {
 
     @GetMapping(value = "{locationId}/forum/questions")
     Page<ForumQuestion> getQuestionsForLocation(@PathVariable int locationId,
-                                                      Pageable pageable){
+                                                Pageable pageable,
+                                                Sort sort) {
         LOGGER.info("GET: getPageReviews: [{}]", locationId);
+
         Page<ForumQuestion> result = forumService.getQuestionsForLocation(locationId, pageable);
         return result;
     }
