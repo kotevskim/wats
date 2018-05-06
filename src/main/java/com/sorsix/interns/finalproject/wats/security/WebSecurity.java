@@ -73,15 +73,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint()).and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET,
-                        "/api/login",
-                        "api/login/github",
-                        "/api/locations/**",
-                        "/api/forum/**",
-                        "/api/test").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/public/**").permitAll()
                 .anyRequest().authenticated()
                 .antMatchers(HttpMethod.POST, "/api/locations/**").authenticated().and()
-                .addFilter(new JwtUsernamePasswordAuthenticationFilter("/api/login", jwtUtil, userDao, authenticationManager()))
+                .addFilter(new JwtUsernamePasswordAuthenticationFilter("/api/public/login", jwtUtil, userDao, authenticationManager()))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDao))
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -163,8 +158,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private Filter ssoFilter() {
         CompositeFilter compositeFilter = new CompositeFilter();
         List<Filter> filters = new ArrayList<>();
-        filters.add(ssoFilter(facebook(), "/api/login/facebook"));
-        filters.add(ssoFilter(github(), "/api/login/github"));
+        filters.add(ssoFilter(facebook(), "/api/public/login/facebook"));
+        filters.add(ssoFilter(github(), "/api/public/login/github"));
         compositeFilter.setFilters(filters);
         return compositeFilter;
     }
