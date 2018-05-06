@@ -2,6 +2,7 @@ package com.sorsix.interns.finalproject.wats.service.impl;
 
 import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
+import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewRequest;
@@ -52,5 +53,11 @@ public class ReviewServiceImpl implements ReviewService {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Collection<ReviewComment> getTopCommentsForReview(long reviewId, int quantity) {
+        Collection<ReviewComment> result = reviewCommentDao.findTopByQuestionId(reviewId, quantity);
+        return result;
     }
 }

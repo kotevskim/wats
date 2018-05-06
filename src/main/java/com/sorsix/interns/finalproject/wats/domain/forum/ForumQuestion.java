@@ -20,7 +20,6 @@ public class ForumQuestion {
     private User user;
     @ManyToOne
     @JoinColumn(name = "location_id")
-    @JsonIgnore
     private Location location;
 
     public ForumQuestion() {}
