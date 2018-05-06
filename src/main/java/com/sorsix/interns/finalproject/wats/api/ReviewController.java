@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/api/locations")
+@RequestMapping("/api/public/locations")
 public class ReviewController {
 
     private final ReviewService reviewService;

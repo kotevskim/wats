@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/api/locations")
+@RequestMapping("/api/public/locations")
 public class ForumController {
     Logger LOGGER = LoggerFactory.getLogger(ForumController.class);
 
