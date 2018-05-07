@@ -1,6 +1,7 @@
 package com.sorsix.interns.finalproject.wats.api;
 
 import com.sorsix.interns.finalproject.wats.domain.User;
+import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewRequest;
@@ -58,5 +59,12 @@ public class ReviewController {
         User user = authenticationService.getUser();
         return reviewService.createReview(reviewRequest, user)
                 .orElseThrow(() -> new RuntimeException("cannot create review"));
+    }
+
+    @GetMapping(value = "{locationId}/reviews/{reviewId}/comments/top")
+    Collection<ReviewComment> getTopCommentsForReview(@PathVariable long reviewId,
+                                                     @RequestParam int quantity) {
+        Collection<ReviewComment> result = reviewService.getTopCommentsForReview(reviewId, quantity);
+        return result;
     }
 }

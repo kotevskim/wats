@@ -40,10 +40,28 @@ public class ForumController {
         return result;
     }
 
+    @GetMapping(value = "{locationId}/forum/questions/{questionId}")
+    ForumQuestion getCurrentQuestion(@PathVariable int locationId,
+                                     @PathVariable int questionId) {
+        LOGGER.info("GET: getCurrentQuestion: [{}]", questionId);
+        ForumQuestion result = forumService.findQuestionById(questionId).orElseThrow(() -> new RuntimeException());
+        return result;
+    }
+
     @GetMapping(value = "{locationId}/forum/questions/{questionId}/answers")
-    Collection<ForumAnswer> getAnswersForQuestion(@PathVariable int questionId) {
+    Page<ForumAnswer> getAnswersForQuestion(@PathVariable int questionId,
+                                            Pageable pageable,
+                                            Sort sort) {
         LOGGER.info("GET: getPageReviews: [{}]", questionId);
-        Collection<ForumAnswer> result = forumService.getAnswersForQuestion(questionId);
+        Page<ForumAnswer> result = forumService.getAnswersForQuestion(questionId, pageable);
+        return result;
+    }
+
+    @GetMapping(value = "{locationId}/forum/questions/{questionId}/answers/top")
+    Collection<ForumAnswer> getTopAnswersForQuestion(@PathVariable int questionId,
+                                               @RequestParam int quantity) {
+        LOGGER.info("GET: getTopAnswersForQuestion: [{}]", questionId);
+        Collection<ForumAnswer> result = forumService.getTopAnswersForQuestion(questionId, quantity);
         return result;
     }
 

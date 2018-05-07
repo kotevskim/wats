@@ -19,4 +19,6 @@ public interface ReviewService {
     Optional<Review> findReviewById(Long id);
 
     Optional<Review> createReview(ReviewRequest reviewRequest, User user);
+
+    Collection<ReviewComment> getTopCommentsForReview(long reviewId, int quantity);
 }

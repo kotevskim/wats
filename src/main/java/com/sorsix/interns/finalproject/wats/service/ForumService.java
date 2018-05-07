@@ -13,9 +13,11 @@ public interface ForumService {
 
     Page<ForumQuestion> getQuestionsForLocation(long locationId, Pageable pageable);
 
-    Collection<ForumAnswer> getAnswersForQuestion(long questionId);
+    Page<ForumAnswer> getAnswersForQuestion(long questionId, Pageable pageable);
 
     ForumAnswer createAnswerForQuestion(User user, ForumQuestion forumQuestion, String answer);
 
     Optional<ForumQuestion> findQuestionById(long questionId);
+
+    Collection<ForumAnswer> getTopAnswersForQuestion(int questionId, int quantity);
 }

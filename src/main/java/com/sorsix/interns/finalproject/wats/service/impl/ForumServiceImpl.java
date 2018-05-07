@@ -38,8 +38,8 @@ public class ForumServiceImpl implements ForumService {
     }
 
     @Override
-    public Collection<ForumAnswer> getAnswersForQuestion(long questionId) {
-        Collection<ForumAnswer> result = forumAnswerDAO.findAllByForumQuestionId(questionId);
+    public Page<ForumAnswer> getAnswersForQuestion(long questionId, Pageable pageable) {
+        Page<ForumAnswer> result = forumAnswerDAO.findAllByForumQuestionId(questionId, pageable);
         return result;
     }
 
@@ -54,5 +54,11 @@ public class ForumServiceImpl implements ForumService {
         return forumQuestionsDAO.findById(questionId);
     }
 
+    @Override
+    public Collection<ForumAnswer> getTopAnswersForQuestion(int questionId, int quantity) {
+//        Collection<ForumAnswer> result = forumAnswerDAO.findAll();
+        Collection<ForumAnswer> result = forumAnswerDAO.findTopByQuestionId(questionId, quantity);
+        return result;
+    }
 
 }
