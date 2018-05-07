@@ -34,6 +34,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public Optional<Review> findReviewById(Long id) {
+    	return reviewDao.findById(id);
+    }
+
+    @Override
     public Page<Review> getReviewsForLocation(Long locationId, Pageable pageable) {
         return reviewDao.findByLocationId(locationId, pageable);
     }

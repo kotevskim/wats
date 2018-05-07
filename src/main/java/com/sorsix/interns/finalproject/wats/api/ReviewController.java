@@ -14,9 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/public/locations")
+@RequestMapping("/api")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -32,20 +33,27 @@ public class ReviewController {
         this.userService = userService;
     }
 
-    @GetMapping("{locationId}/reviews")
+    @GetMapping("public/locations/{locationId}/reviews/{reviewId}")
+    public Review getReviewsByLocation(@PathVariable Long locationId,
+    										 @PathVariable Long reviewId) {
+        return reviewService.findReviewById(reviewId)
+        	.orElseThrow(() -> new RuntimeException("No such review"));
+    }
+
+    @GetMapping("public/locations/{locationId}/reviews")
     public Page<Review> getReviewsByLocation(@PathVariable Long locationId,
                                              Pageable pageable,
                                              Sort sort) {
         return reviewService.getReviewsForLocation(locationId, pageable);
     }
 
-    @GetMapping("{locationId}/reviews/{reviewId}/comments")
+    @GetMapping("public/locations/{locationId}/reviews/{reviewId}/comments")
     public Collection<ReviewComment> getReviewComments(@PathVariable Long locationId,
                                                        @PathVariable Long reviewId) {
         return reviewService.getReviewComments(reviewId);
     }
 
-    @PostMapping("{locationId}/reviews")
+    @PostMapping("locations/{locationId}/reviews")
     public Review postReview(@RequestBody ReviewRequest reviewRequest) {
         User user = authenticationService.getUser();
         return reviewService.createReview(reviewRequest, user)
