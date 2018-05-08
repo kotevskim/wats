@@ -3,7 +3,7 @@ package com.sorsix.interns.finalproject.wats.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.domain.UserCredentials;
-import com.sorsix.interns.finalproject.wats.persistence.UserDao;
+import com.sorsix.interns.finalproject.wats.persistence.UserDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,16 +27,16 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
     static final Logger LOGGER = LoggerFactory.getLogger(JwtUsernamePasswordAuthenticationFilter.class);
 
     private final JwtUtil jwtUtil;
-    private final UserDao userDao;
+    private final UserDAO userDAO;
     private final AuthenticationManager authenticationManager;
 
     public JwtUsernamePasswordAuthenticationFilter(String filterProcessingUrl,
                                                    JwtUtil jwtUtil,
-                                                   UserDao userDao,
+                                                   UserDAO userDAO,
                                                    AuthenticationManager authenticationManager) {
         super.setFilterProcessesUrl(filterProcessingUrl);
         this.jwtUtil = jwtUtil;
-        this.userDao = userDao;
+        this.userDAO = userDAO;
         this.authenticationManager = authenticationManager;
     }
 
@@ -62,7 +62,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
                                             Authentication auth) throws IOException, ServletException {
         org.springframework.security.core.userdetails.User coreUser
                 = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-        User user = userDao.findByUsername(coreUser.getUsername()).get();
+        User user = userDAO.findByUsername(coreUser.getUsername()).get();
         Map<String, Object> tokenClaims = new HashMap<>();
         tokenClaims.put("sub", user.getUsername()); // sets token's subject
         tokenClaims.put("userId", user.getId());

@@ -81,4 +81,12 @@ public class Review {
     public void setLocation(Location location) {
         this.location = location;
     }
+
+    public Set<User> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
+    }
 }

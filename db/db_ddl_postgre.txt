@@ -1,21 +1,21 @@
 CREATE TABLE "locations" (
   "id" BIGSERIAL PRIMARY KEY,
-  "name" VARCHAR(30)
+  "name" varchar(30)
 );
 
 CREATE TABLE "users" (
   "id" BIGSERIAL PRIMARY KEY,
-  "name" VARCHAR,
-  "username" VARCHAR(15),
-  "email" VARCHAR,
-  "password" VARCHAR,
-  "picture_url" VARCHAR,
+  "name" varchar,
+  "username" varchar(15),
+  "email" varchar,
+  "password" varchar,
+  "picture_url" varchar,
   "current_location" BIGINT REFERENCES "locations"(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE TABLE "identities" (
-  "sso_id" BIGSERIAL,
-  "provider" VARCHAR,
+  "sso_id" bigserial,
+  "provider" varchar,
   "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -61,6 +61,12 @@ CREATE TABLE "forum_answer_likes" (
   "user_id" BIGINT REFERENCES "users" ON DELETE SET NULL ON UPDATE CASCADE,
   "forum_answer_id" BIGINT REFERENCES "forum_answers"(id) ON DELETE SET NULL ON UPDATE CASCADE,
   PRIMARY KEY("user_id", "forum_answer_id")
+);
+
+CREATE TABLE "review_comment_likes" (
+  "user_id" BIGINT REFERENCES "users"(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  "comment_id" BIGINT REFERENCES "review_comments"(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  PRIMARY KEY("user_id", "comment_id")
 );
 
 CREATE TABLE "sso_identities"

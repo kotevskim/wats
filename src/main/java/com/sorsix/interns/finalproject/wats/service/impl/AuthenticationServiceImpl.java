@@ -1,7 +1,7 @@
 package com.sorsix.interns.finalproject.wats.service.impl;
 
 import com.sorsix.interns.finalproject.wats.domain.User;
-import com.sorsix.interns.finalproject.wats.persistence.UserDao;
+import com.sorsix.interns.finalproject.wats.persistence.UserDAO;
 import com.sorsix.interns.finalproject.wats.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,11 +15,11 @@ import java.util.Optional;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final UserDao userDao;
+    private final UserDAO userDAO;
 
     @Autowired
-    public AuthenticationServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
+    public AuthenticationServiceImpl(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     @Override
@@ -45,8 +45,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public User getUser() {
             return getUserId()
-                    .map(id -> userDao.findById(id).get())
-                    .orElseGet(() -> userDao.findByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()).get());
+                    .map(id -> userDAO.findById(id).get())
+                    .orElseGet(() -> userDAO.findByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()).get());
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
 import com.sorsix.interns.finalproject.wats.domain.forum.ForumQuestion;
 import com.sorsix.interns.finalproject.wats.persistence.ForumAnswerDAO;
 import com.sorsix.interns.finalproject.wats.persistence.ForumQuestionsDAO;
-import com.sorsix.interns.finalproject.wats.persistence.UserDao;
+import com.sorsix.interns.finalproject.wats.persistence.UserDAO;
 import com.sorsix.interns.finalproject.wats.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,14 +21,14 @@ public class ForumServiceImpl implements ForumService {
 
     private ForumQuestionsDAO forumQuestionsDAO;
     private ForumAnswerDAO forumAnswerDAO;
-    private UserDao userDao;
+    private UserDAO userDAO;
     @Autowired
     public ForumServiceImpl(ForumQuestionsDAO forumQuestionsDAO,
                             ForumAnswerDAO forumAnswerDAO,
-                            UserDao userDao) {
+                            UserDAO userDAO) {
         this.forumQuestionsDAO = forumQuestionsDAO;
         this.forumAnswerDAO = forumAnswerDAO;
-        this.userDao = userDao;
+        this.userDAO = userDAO;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.sorsix.interns.finalproject.wats.security;
 
 import com.sorsix.interns.finalproject.wats.domain.User;
-import com.sorsix.interns.finalproject.wats.persistence.UserDao;
+import com.sorsix.interns.finalproject.wats.persistence.UserDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,17 +52,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private final OAuth2ClientContext oauth2ClientContext;
     private final OAuth2SuccessHandler OAuth2SuccessHandler;
-    private final UserDao userDao;
+    private final UserDAO userDAO;
     private final JwtUtil jwtUtil;
 
     @Autowired
     public WebSecurity(@Qualifier("oauth2ClientContext") OAuth2ClientContext oauth2ClientContext,
                        OAuth2SuccessHandler OAuth2SuccessHandler,
-                       UserDao userDao,
+                       UserDAO userDAO,
                        JwtUtil jwtUtil) {
         this.oauth2ClientContext = oauth2ClientContext;
         this.OAuth2SuccessHandler = OAuth2SuccessHandler;
-        this.userDao = userDao;
+        this.userDAO = userDAO;
         this.jwtUtil = jwtUtil;
     }
 
@@ -76,8 +76,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/public/**").permitAll()
                 .anyRequest().authenticated()
                 .antMatchers(HttpMethod.POST, "/api/locations/**").authenticated().and()
-                .addFilter(new JwtUsernamePasswordAuthenticationFilter("/api/public/login", jwtUtil, userDao, authenticationManager()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDao))
+                .addFilter(new JwtUsernamePasswordAuthenticationFilter("/api/public/login", jwtUtil, userDAO, authenticationManager()))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDAO))
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
@@ -91,7 +91,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            User user = userDao.findByUsername(username)
+            User user = userDAO.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " does not exist"));
 
             return new org.springframework.security.core.userdetails.User(

@@ -1,6 +1,6 @@
 package com.sorsix.interns.finalproject.wats.security;
 
-import com.sorsix.interns.finalproject.wats.persistence.UserDao;
+import com.sorsix.interns.finalproject.wats.persistence.UserDAO;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,12 +20,12 @@ import java.util.Map;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserDao userDao;
+    private final UserDAO userDAO;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDao userDao) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserDAO userDAO) {
         super(authenticationManager);
         this.jwtUtil = jwtUtil;
-        this.userDao = userDao;
+        this.userDAO = userDAO;
     }
 
     @Override
