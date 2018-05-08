@@ -1,26 +1,34 @@
 package com.sorsix.interns.finalproject.wats.domain;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "identities")
-public class Identity {
+@Table(name = "sso_identities")
+@IdClass(SsoIdentityPrimaryKey.class)
+public class SsoIdentity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ssoId;
+    private String ssoId;
+    @Id
     private String provider;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Identity() {}
+    public SsoIdentity() {}
 
-    public Long getSsoId() {
+    public SsoIdentity(String ssoId, String provider, User user) {
+        this.ssoId = ssoId;
+        this.provider = provider;
+        this.user = user;
+    }
+
+    public String getSsoId() {
         return ssoId;
     }
 
-    public void setSsoId(Long ssoId) {
+    public void setSsoId(String ssoId) {
         this.ssoId = ssoId;
     }
 

@@ -36,8 +36,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public Optional<Long> getUserId() {
 
         try {
-            return Optional.of((Long) SecurityContextHolder.getContext().getAuthentication().getDetails());
-        } catch (ClassCastException e) {
+            return Optional.of(Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getDetails().toString()));
+        } catch (Exception e) {
             return Optional.empty();
         }
     }
@@ -46,7 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User getUser() {
             return getUserId()
                     .map(id -> userDao.findById(id).get())
-                    .orElseGet(() -> userDao.findByUsername(getPrinciple().get().getName()).get());
+                    .orElseGet(() -> userDao.findByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString()).get());
     }
 
     @Override

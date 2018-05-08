@@ -37,4 +37,9 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findUserByUsername(String username) {
         return userDao.findByUsername(username);
     }
+
+    @Override
+    public User createUser(String name, String username, String email, String password, String pictureUrl) {
+        return this.userDao.save(new User(name, username, email, password, pictureUrl));
+    }
 }

@@ -13,4 +13,5 @@ public interface UserService {
     Collection<Review> getUserReviews(Long userId);
     Optional<User> findUserById(long userId);
     Optional<User> findUserByUsername(String username);
+    User createUser(String name, String username, String email, String password, String pictureUrl);
 }

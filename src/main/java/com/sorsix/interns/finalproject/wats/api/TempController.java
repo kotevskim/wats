@@ -40,7 +40,7 @@ public class TempController {
     @GetMapping(value = "test")
     @ResponseBody
     public User test() {
-        return userDao.save(new User("Kosta", "koki96", null, passwordEncoder.encode("kostadin")));
+        return userDao.save(new User("Kosta", "koki96", null, passwordEncoder.encode("kostadin"), null));
 //        String tmp = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     }
 }

@@ -80,7 +80,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDao))
                 .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//                .logout().logoutSuccessUrl("/me").and()
     }
 
     @Override

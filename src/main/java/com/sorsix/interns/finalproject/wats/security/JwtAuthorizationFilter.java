@@ -53,7 +53,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) tokenClaims.get("userAuthorities");
                     AbstractAuthenticationToken authentication
                             = new UsernamePasswordAuthenticationToken(username, null, authorities);
-                    Long userId = Long.parseLong(tokenClaims.get("userId").toString());
+                    String userId = tokenClaims.get("userId").toString();
                     authentication.setDetails(userId);
                     return authentication;
                 }
