@@ -5,10 +5,11 @@ import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.domain.UserDTO;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
-import com.sorsix.interns.finalproject.wats.persistence.LocationDAO;
 import com.sorsix.interns.finalproject.wats.persistence.ReviewCommentDAO;
 import com.sorsix.interns.finalproject.wats.persistence.ReviewDAO;
 import com.sorsix.interns.finalproject.wats.service.ReviewService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,17 +24,16 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
+    private Logger LOGGER = LoggerFactory.getLogger(ReviewServiceImpl.class);
+
     private final ReviewDAO reviewDAO;
     private final ReviewCommentDAO reviewCommentDAO;
-    private final LocationDAO locationDAO;
 
     @Autowired
     public ReviewServiceImpl(ReviewDAO reviewDAO,
-                             ReviewCommentDAO reviewCommentDAO,
-                             LocationDAO locationDAO) {
+                             ReviewCommentDAO reviewCommentDAO) {
         this.reviewDAO = reviewDAO;
         this.reviewCommentDAO = reviewCommentDAO;
-        this.locationDAO = locationDAO;
     }
 
     @Override
@@ -60,62 +60,61 @@ public class ReviewServiceImpl implements ReviewService {
     public Review createReview(User user, Location location, String description) {
         LocalDateTime datePublished = LocalDateTime.now();
         Review review = new Review(description, datePublished, user, location);
-        return reviewDAO.save(review);
+        Review r = reviewDAO.save(review);
+        LOGGER.info("Created review with id: {}, for location [id: {}, name: {}]",
+                r.getId(), r.getLocation().getId(), r.getLocation().getName());
+        return r;
     }
 
     @Override
-    public Collection<ReviewComment> getTopCommentsForReview(long reviewId, int limit) {
+    public Collection<ReviewComment> getTopCommentsForReview(Long reviewId, int limit) {
         return reviewCommentDAO.findTopByQuestionId(reviewId, limit);
-    }
-
-    @Override
-    public Long countReviewLikes(Long reviewId) {
-        return this.reviewDAO.countReviewLikes(reviewId);
     }
 
     @Override
     public ReviewComment createReviewComment(User user, Review review, String description) {
         LocalDateTime datePublished = LocalDateTime.now();
-        return this.reviewCommentDAO.save(new ReviewComment(user, review, description, datePublished));
+        ReviewComment c = this.reviewCommentDAO.save(new ReviewComment(user, review, description, datePublished));
+        LOGGER.info("Created comment with id: {}, for review with id: {}", c.getId(), c.getReview().getId());
+        return c;
     }
 
     @Override
-    public Collection<UserDTO> getUsersForLikesOnReview(Long reviewId) {
-        return this.reviewDAO.getUsersForLikesOnReview(reviewId)
-                .stream()
-                .map(it -> new UserDTO(Long.parseLong(
-                        it.get("id").toString()),
-                        it.get("name").toString(),
-                        it.get("username").toString()))
-                .collect(Collectors.toList());
+    public Collection<User> mapReviewLikesToUsers(Review review) {
+        return review.getLikes();
     }
 
     @Override
-    public Long countReviewCommentLikes(Long commentId) {
-        return this.reviewCommentDAO.countReviewCommentLikes(commentId);
-    }
-
-    @Override
-    public Collection<UserDTO> getUsersForLikesOnReviewComment(Long commentId) {
-        return this.reviewCommentDAO.getUsersForLikesOnReviewComment(commentId)
-                .stream()
-                .map(it -> new UserDTO(Long.parseLong(
-                        it.get("id").toString()),
-                        it.get("name").toString(),
-                        it.get("username").toString()))
-                .collect(Collectors.toList());
+    public Collection<User> mapReviewCommentLikesToUsers(ReviewComment comment) {
+        return comment.getLikes();
     }
 
     @Override
     @Transactional
-    public void likeReview(Review review, User user) {
-        review.getLikes().add(user);
+    public boolean postLikeForReview(Review review, User user) {
+        boolean res = review.getLikes().add(user);
+        if (res) {
+            LOGGER.info("Posted like for review with id: {}, from user with id: {}",
+                    review.getId(), user.getId());
+        } else {
+            LOGGER.info("Removed like for review with id: {}, from user with id: {}",
+                    review.getId(), user.getId());
+        }
+        return res;
     }
 
     @Override
     @Transactional
-    public void likeReviewComment(ReviewComment comment, User user) {
-        comment.getLikes().add(user);
+    public boolean postLikeForReviewComment(ReviewComment comment, User user) {
+        boolean res = comment.getLikes().add(user);
+        if (res) {
+            LOGGER.info("Posted like for comment with id: {}, from user with id: {}",
+                    comment.getId(), user.getId());
+        } else {
+            LOGGER.info("Removed like for comment with id: {}, from user with id: {}",
+                    comment.getId(), user.getId());
+        }
+        return res;
     }
 
 }

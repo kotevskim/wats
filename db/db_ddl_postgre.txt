@@ -22,7 +22,7 @@ CREATE TABLE "identities" (
 CREATE TABLE "reviews" (
   "id" BIGSERIAL PRIMARY KEY,
   "description" VARCHAR,
-  "date_published" TIMESTAMP WITHOUT TIME ZONE,
+  "datePublished" TIMESTAMP WITHOUT TIME ZONE,
   "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
   "location_id" BIGINT REFERENCES "locations"(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -30,7 +30,7 @@ CREATE TABLE "reviews" (
 CREATE TABLE "review_comments" (
   "id" BIGSERIAL PRIMARY KEY,
   "description" VARCHAR,
-  "date_published" TIMESTAMP WITHOUT TIME ZONE,
+  "datePublished" TIMESTAMP WITHOUT TIME ZONE,
   "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
   "review_id" BIGINT REFERENCES "reviews"(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -44,7 +44,7 @@ CREATE TABLE "review_likes" (
 CREATE TABLE "forum_questions" (
   "id" BIGSERIAL PRIMARY KEY,
   "description" VARCHAR,
-  "date_published" TIMESTAMP WITHOUT TIME ZONE,
+  "datePublished" TIMESTAMP WITHOUT TIME ZONE,
   "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
   "location_id" BIGINT REFERENCES "locations"(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -52,7 +52,7 @@ CREATE TABLE "forum_questions" (
 CREATE TABLE "forum_answers" (
   "id" BIGSERIAL PRIMARY KEY,
   "description" VARCHAR,
-  "date_published" TIMESTAMP WITHOUT TIME ZONE,
+  "datePublished" TIMESTAMP WITHOUT TIME ZONE,
   "user_id" BIGINT REFERENCES "users"(id) ON DELETE SET NULL ON UPDATE CASCADE,
   "forum_question_id" BIGINT REFERENCES "forum_questions"(id) ON DELETE SET NULL ON UPDATE CASCADE
 );

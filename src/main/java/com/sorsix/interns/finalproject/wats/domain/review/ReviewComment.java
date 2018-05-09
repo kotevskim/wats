@@ -28,12 +28,13 @@ public class ReviewComment {
     @JsonIgnore
     private Review review;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JoinTable(
             name = "review_comment_likes",
             joinColumns = { @JoinColumn(name = "comment_id") },
             inverseJoinColumns = { @JoinColumn(name = "user_id") }
     )
+    @JsonIgnore
     Set<User> likes = new HashSet<>();
 
     public ReviewComment() {} // JPA only
@@ -91,5 +92,9 @@ public class ReviewComment {
 
     public void setLikes(Set<User> likes) {
         this.likes = likes;
+    }
+
+    public int getNumLikes() {
+        return this.likes.size();
     }
 }

@@ -9,7 +9,7 @@ spring:
     password: postgres
   # JPA and Hibernate properties
   jpa:
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: validate
     properties:

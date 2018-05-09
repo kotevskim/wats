@@ -1,81 +1,112 @@
 package com.sorsix.interns.finalproject.wats.api;
 
+import com.sorsix.interns.finalproject.wats.api.exception.ForumAnswerNotFoundException;
+import com.sorsix.interns.finalproject.wats.api.exception.ForumQuestionNotFoundException;
+import com.sorsix.interns.finalproject.wats.api.exception.LocationNotFoundException;
+import com.sorsix.interns.finalproject.wats.api.exception.ReviewCommentNotFoundException;
 import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
 import com.sorsix.interns.finalproject.wats.domain.forum.ForumQuestion;
+import com.sorsix.interns.finalproject.wats.service.AuthenticationService;
 import com.sorsix.interns.finalproject.wats.service.ForumService;
-import com.sorsix.interns.finalproject.wats.service.UserService;
-import org.hibernate.query.QueryParameter;
+import com.sorsix.interns.finalproject.wats.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/api/public/locations")
+@RequestMapping("/api")
 public class ForumController {
-    Logger LOGGER = LoggerFactory.getLogger(ForumController.class);
 
-    private ForumService forumService;
-    private UserService userService;
+    private Logger LOGGER = LoggerFactory.getLogger(ForumController.class);
+
+    private final ForumService forumService;
+    private final AuthenticationService authenticationService;
+    private final LocationService locationService;
+
     @Autowired
     public ForumController(ForumService forumService,
-                           UserService userService) {
+                           AuthenticationService authenticationService,
+                           LocationService locationService) {
         this.forumService = forumService;
-        this.userService = userService;
+        this.authenticationService = authenticationService;
+        this.locationService = locationService;
     }
 
-    @GetMapping(value = "{locationId}/forum/questions")
-    Page<ForumQuestion> getQuestionsForLocation(@PathVariable int locationId,
+    @GetMapping("public/locations/{locationId}/forum/questions/{questionId}")
+    ForumQuestion getQuestion(@PathVariable Long questionId) {
+        return forumService.findQuestion(questionId)
+                .orElseThrow(() -> new ForumQuestionNotFoundException(questionId));
+    }
+
+    @GetMapping("public/locations/{locationId}/forum/questions")
+    Page<ForumQuestion> getQuestionsForLocation(@PathVariable Long locationId,
                                                 Pageable pageable,
                                                 Sort sort) {
-        LOGGER.info("GET: getPageReviews: [{}]", locationId);
-
-        Page<ForumQuestion> result = forumService.getQuestionsForLocation(locationId, pageable);
-        return result;
+        return this.locationService.findLocation(locationId)
+                .map(it -> forumService.getQuestionsForLocation(locationId, pageable))
+                .orElseThrow(() -> new LocationNotFoundException(locationId));
     }
 
-    @GetMapping(value = "{locationId}/forum/questions/{questionId}")
-    ForumQuestion getCurrentQuestion(@PathVariable int locationId,
-                                     @PathVariable int questionId) {
-        LOGGER.info("GET: getCurrentQuestion: [{}]", questionId);
-        ForumQuestion result = forumService.findQuestionById(questionId).orElseThrow(() -> new RuntimeException());
-        return result;
+    @GetMapping("public/locations/{locationId}/forum/questions/{questionId}/answers")
+    Page<ForumAnswer> getQuestionAnswers(@PathVariable Long questionId,
+                                         Pageable pageable,
+                                         Sort sort) {
+        return this.forumService.findQuestion(questionId)
+                .map(it -> forumService.getQuestionAnswers(questionId, pageable))
+                .orElseThrow(() -> new ForumQuestionNotFoundException(questionId));
     }
 
-    @GetMapping(value = "{locationId}/forum/questions/{questionId}/answers")
-    Page<ForumAnswer> getAnswersForQuestion(@PathVariable int questionId,
-                                            Pageable pageable,
-                                            Sort sort) {
-        LOGGER.info("GET: getPageReviews: [{}]", questionId);
-        Page<ForumAnswer> result = forumService.getAnswersForQuestion(questionId, pageable);
-        return result;
+    @GetMapping("public/locations/{locationId}/forum/questions/{questionId}/top-answers")
+    Collection<ForumAnswer> getTopAnswersForQuestion(@PathVariable Long questionId,
+                                                     @RequestParam int limit) {
+        return this.forumService.findQuestion(questionId)
+                .map(it -> forumService.getTopAnswersForQuestion(questionId, limit))
+                .orElseThrow(() -> new ForumQuestionNotFoundException(questionId));
     }
 
-    @GetMapping(value = "{locationId}/forum/questions/{questionId}/answers/top")
-    Collection<ForumAnswer> getTopAnswersForQuestion(@PathVariable int questionId,
-                                               @RequestParam int quantity) {
-        LOGGER.info("GET: getTopAnswersForQuestion: [{}]", questionId);
-        Collection<ForumAnswer> result = forumService.getTopAnswersForQuestion(questionId, quantity);
-        return result;
+    @GetMapping("public/locations/{locationId}/forum/questions/{questionId}/answers/{answersId}/likes")
+    Collection<User> getUsersForLikesOnForumAnswer(@PathVariable Long answersId) {
+        return this.forumService.findAnswer(answersId)
+                .map(this.forumService::mapAnswerLikesToUsers)
+                .orElseThrow(() -> new ReviewCommentNotFoundException(answersId));
     }
 
-    @PostMapping(value = "{locationId}/forum/questions/{questionId}/answers")
-    ForumAnswer postAnswerForQuestion(Authentication authentication,
-                                      @RequestBody String answer,
-                                      @PathVariable long locationId,
-                                      @PathVariable long questionId) {
-        LOGGER.info("POST: postAnswerForQuestion: id:[{}], answer:[{}]", questionId, answer);
+    @PostMapping("locations/{locationId}/forum/questions")
+    ForumQuestion postQuestion(@RequestBody String question,
+                               @PathVariable Long locationId) {
+        return this.locationService.findLocation(locationId)
+                .map(location -> {
+                    User user = this.authenticationService.getUser();
+                    return forumService.createQuestion(user, location, question);
+                })
+                .orElseThrow(() -> new RuntimeException("invalid location id"));
+    }
 
-        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        User user = userService.findUserById(userId).get();
-        ForumQuestion forumQuestion = forumService.findQuestionById(questionId).orElseThrow(() -> new RuntimeException());
-        ForumAnswer result = forumService.createAnswerForQuestion(user, forumQuestion, answer);
-        return result;
+    @PostMapping("locations/{locationId}/forum/questions/{questionId}/answers")
+    ForumAnswer postAnswerForQuestion(@RequestBody String answer,
+                                      @PathVariable Long questionId) {
+        return this.forumService.findQuestion(questionId)
+                .map(question -> {
+                    User user = this.authenticationService.getUser();
+                    return forumService.createAnswerForQuestion(user, question, answer);
+                })
+                .orElseThrow(() -> new ForumQuestionNotFoundException(questionId));
+    }
+
+    @PostMapping("locations/{locationId}/forum/questions/{questionId}/answers/{answerId}/likes")
+    boolean likeAnswer(@PathVariable Long answerId) {
+        return this.forumService.findAnswer(answerId)
+                .map(answer -> {
+                    User user = authenticationService.getUser();
+                    return this.forumService.postLikeForAnswer(answer, user);
+                })
+                .orElseThrow(() -> new ForumAnswerNotFoundException(answerId));
     }
 }

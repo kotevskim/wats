@@ -1,6 +1,9 @@
 package com.sorsix.interns.finalproject.wats.domain;
 
+import com.sorsix.interns.finalproject.wats.domain.review.Review;
+
 import javax.persistence.*;
+import java.util.Collection;
 
 @Table(name = "locations")
 @Entity
@@ -10,6 +13,9 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @OneToMany(mappedBy = "location")
+    public Collection<Review> reviews;
 
     public Location() {}
 

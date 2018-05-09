@@ -20,7 +20,7 @@ public class ForumAnswer {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "forum_question_id")
     @JsonIgnore
     private ForumQuestion forumQuestion;
@@ -31,6 +31,7 @@ public class ForumAnswer {
             joinColumns = { @JoinColumn(name = "forum_answer_id") },
             inverseJoinColumns = { @JoinColumn(name = "user_id") }
     )
+    @JsonIgnore
     Set<User> likes = new HashSet<>();
 
     public ForumAnswer() {}
@@ -80,5 +81,13 @@ public class ForumAnswer {
 
     public void setForumQuestion(ForumQuestion forumQuestion) {
         this.forumQuestion = forumQuestion;
+    }
+
+    public Set<User> getLikes() {
+        return likes;
+    }
+
+    public int getNumLikes() {
+        return this.likes.size();
     }
 }

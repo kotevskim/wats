@@ -1,5 +1,6 @@
 package com.sorsix.interns.finalproject.wats.domain.review;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
 
@@ -20,16 +21,18 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
+    @JsonIgnore
     private Location location;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "review_likes",
             joinColumns = {@JoinColumn(name = "review_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
+    @JsonIgnore
     Set<User> likes = new HashSet<>();
 
     public Review() {
@@ -88,5 +91,10 @@ public class Review {
 
     public void setLikes(Set<User> likes) {
         this.likes = likes;
+    }
+
+    // TODO remove this method, it is not db optimized, write own db query
+    public int getNumLikes() {
+        return this.likes.size();
     }
 }

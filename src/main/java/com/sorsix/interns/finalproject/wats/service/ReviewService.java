@@ -21,21 +21,17 @@ public interface ReviewService {
 
     Page<ReviewComment> getReviewComments(Long reviewId, Pageable pageable);
 
-    Collection<ReviewComment> getTopCommentsForReview(long reviewId, int limit);
+    Collection<ReviewComment> getTopCommentsForReview(Long reviewId, int limit);
 
-    Collection<UserDTO> getUsersForLikesOnReview(Long reviewId);
+    Collection<User> mapReviewLikesToUsers(Review review);
 
-    Collection<UserDTO> getUsersForLikesOnReviewComment(Long commentId);
-
-    Long countReviewLikes(Long reviewId);
-
-    Long countReviewCommentLikes(Long commentId);
+    Collection<User> mapReviewCommentLikesToUsers(ReviewComment comment);
 
     Review createReview(User user, Location location, String description);
 
     ReviewComment createReviewComment(User user, Review review, String description);
 
-    void likeReview(Review review, User user);
+    boolean postLikeForReview(Review review, User user);
 
-    void likeReviewComment(ReviewComment comment, User user);
+    boolean postLikeForReviewComment(ReviewComment comment, User user);
 }

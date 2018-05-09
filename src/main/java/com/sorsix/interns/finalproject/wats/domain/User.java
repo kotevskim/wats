@@ -17,7 +17,7 @@ public class User {
     @JsonIgnore
     private String password;
     private String pictureUrl;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "current_location")
     private Location currentLocation;
 

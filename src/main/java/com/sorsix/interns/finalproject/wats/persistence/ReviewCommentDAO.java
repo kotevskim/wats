@@ -39,11 +39,8 @@ public interface ReviewCommentDAO extends JpaRepository<ReviewComment, Long> {
             nativeQuery = true)
     Collection<ReviewComment> findTopByQuestionId(long reviewId, int size);
 
-    @Query(value = "SELECT COUNT(*) FROM review_comment_likes WHERE comment_id = ?1",
-            nativeQuery = true)
-    Long countReviewCommentLikes(Long comment_id);
-
+    @Deprecated
     @Query(value = "SELECT u.id, u.name, u.username FROM users u JOIN review_comment_likes rcl ON u.id = rcl.user_id WHERE rcl.comment_id = ?1",
             nativeQuery = true)
-    Collection<Map<String, Object>> getUsersForLikesOnReviewComment(Long commentId);
+    Collection<Map<String, Object>> mapReviewCommentLikesToUsers(Long commentId);
 }

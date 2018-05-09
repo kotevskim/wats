@@ -6,6 +6,7 @@ import com.sorsix.interns.finalproject.wats.domain.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "forum_questions")
@@ -14,15 +15,23 @@ public class ForumQuestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    private Timestamp date_published;
+    private LocalDateTime datePublished;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
+    @JsonIgnore
     private Location location;
 
     public ForumQuestion() {}
+
+    public ForumQuestion(String description, LocalDateTime datePublished, User user, Location location) {
+        this.description = description;
+        this.datePublished = datePublished;
+        this.user = user;
+        this.location = location;
+    }
 
     public Long getId() {
         return id;
@@ -40,12 +49,12 @@ public class ForumQuestion {
         this.description = description;
     }
 
-    public Timestamp getDate_published() {
-        return date_published;
+    public LocalDateTime getDatePublished() {
+        return datePublished;
     }
 
-    public void setDate_published(Timestamp date_published) {
-        this.date_published = date_published;
+    public void setDatePublished(LocalDateTime datePublished) {
+        this.datePublished = datePublished;
     }
 
     public User getUser() {
