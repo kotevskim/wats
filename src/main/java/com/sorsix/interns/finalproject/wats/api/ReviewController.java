@@ -60,9 +60,11 @@ public class ReviewController {
     }
 
     @GetMapping("public/locations/{locationId}/reviews/{reviewId}/comments")
-    public Collection<ReviewComment> getReviewComments(@PathVariable Long locationId,
-                                                       @PathVariable Long reviewId) {
-        return reviewService.getReviewComments(reviewId);
+    public Page<ReviewComment> getReviewComments(@PathVariable Long locationId,
+                                                       @PathVariable Long reviewId,
+                                                       Pageable pageable,
+                                                       Sort sort) {
+        return reviewService.getReviewComments(reviewId, pageable);
     }
 
     @PostMapping("locations/{locationId}/reviews")

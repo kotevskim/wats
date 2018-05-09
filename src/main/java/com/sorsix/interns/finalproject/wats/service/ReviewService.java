@@ -5,7 +5,6 @@ import com.sorsix.interns.finalproject.wats.domain.User;
 import com.sorsix.interns.finalproject.wats.domain.UserDTO;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
-import com.sorsix.interns.finalproject.wats.domain.review.PostItemRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,7 +19,7 @@ public interface ReviewService {
 
     Page<Review> getReviewsForLocation(Long loactionId, Pageable pageable);
 
-    Collection<ReviewComment> getReviewComments(Long reviewId);
+    Page<ReviewComment> getReviewComments(Long reviewId, Pageable pageable);
 
     Collection<ReviewComment> getTopCommentsForReview(long reviewId, int limit);
 

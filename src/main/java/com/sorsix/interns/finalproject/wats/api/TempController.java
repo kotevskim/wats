@@ -9,25 +9,31 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sorsix.interns.finalproject.wats.domain.Location;
+import com.sorsix.interns.finalproject.wats.persistence.LocationDAO;
+
+import org.springframework.web.bind.annotation.*;
+
 import java.security.Principal;
 
-@Controller
-@RequestMapping(value = "/api/public")
+@RestController
+@RequestMapping(value = "/api/public/locations")
 public class TempController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserDAO userDAO;
+    @Autowired
+    private LocationDAO locationDAO;
 
-    @GetMapping(value = "user")
-    @ResponseBody
-    public Principal user(Principal principal) {
-        return principal;
+    @GetMapping("{locationId}")
+    public Location user(@PathVariable Long locationId) {
+        return this.locationDAO.findById(locationId)
+        .orElseThrow(() -> new RuntimeException("no such location"));
     }
 
     @GetMapping(value = "test")
-    @ResponseBody
     public User test() {
         return userDAO.save(new User("Kosta", "koki96", null, passwordEncoder.encode("kostadin"), null));
 //        String tmp = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();

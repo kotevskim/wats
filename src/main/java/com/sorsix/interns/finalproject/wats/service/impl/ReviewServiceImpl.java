@@ -52,8 +52,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Collection<ReviewComment> getReviewComments(Long reviewId) {
-        return reviewCommentDAO.findByReviewId(reviewId);
+    public Page<ReviewComment> getReviewComments(Long reviewId, Pageable pageable) {
+        return reviewCommentDAO.findByReviewId(reviewId, pageable);
     }
 
     @Override

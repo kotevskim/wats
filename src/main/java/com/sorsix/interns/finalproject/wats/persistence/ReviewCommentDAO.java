@@ -4,6 +4,8 @@ import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,7 +13,7 @@ import java.util.Map;
 @Repository
 public interface ReviewCommentDAO extends JpaRepository<ReviewComment, Long> {
 
-    Collection<ReviewComment> findByReviewId(Long id);
+    Page<ReviewComment> findByReviewId(Long id, Pageable pageable);
 
     @Query(value =
             "SELECT temp_result.id, temp_result.description, temp_result.date_published, \n" +
@@ -24,7 +26,7 @@ public interface ReviewCommentDAO extends JpaRepository<ReviewComment, Long> {
                     "    SELECT foo.id as comment_id, COUNT(*) as num_likes\n" +
                     "    FROM (\n" +
                     "        SELECT fa.* from review_comments fa \n" +
-                    "        JOIN review_comment_likes fal \n" +
+                    "        LEFT OUTER JOIN review_comment_likes fal \n" +
                     "        ON fa.id=fal.comment_id\n" +
                     "    ) foo \n" +
                     "    WHERE foo.review_id=?1\n" +
@@ -32,7 +34,7 @@ public interface ReviewCommentDAO extends JpaRepository<ReviewComment, Long> {
                     ") tmp_count\n" +
                     "ON fa.id=tmp_count.comment_id\n" +
                     ") temp_result\n" +
-                    "ORDER BY temp_result.num_likes ASC\n" +
+                    "ORDER BY temp_result.num_likes DESC\n" +
                     "LIMIT ?2",
             nativeQuery = true)
     Collection<ReviewComment> findTopByQuestionId(long reviewId, int size);
