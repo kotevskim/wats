@@ -35,12 +35,6 @@ public class ReviewController {
         this.locationService = locationService;
     }
 
-    @GetMapping("public/locations/{id}")
-    public Location getLocation(@PathVariable Long id) {
-        return locationService.findLocation(id)
-                .orElseThrow(() -> new LocationNotFoundException(id));
-    }
-
     @GetMapping("public/locations/{locationId}/reviews/{reviewId}")
     public Review getReview(@PathVariable Long reviewId) {
         return reviewService.findReview(reviewId)

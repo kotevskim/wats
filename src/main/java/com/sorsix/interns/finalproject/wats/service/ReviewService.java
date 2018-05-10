@@ -2,7 +2,6 @@ package com.sorsix.interns.finalproject.wats.service;
 
 import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
-import com.sorsix.interns.finalproject.wats.domain.UserDTO;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
 import org.springframework.data.domain.Page;
@@ -17,7 +16,7 @@ public interface ReviewService {
 
     Optional<ReviewComment> findReviewComment(Long commentId);
 
-    Page<Review> getReviewsForLocation(Long loactionId, Pageable pageable);
+    Page<Review> getReviewsForLocation(Long locationId, Pageable pageable);
 
     Page<ReviewComment> getReviewComments(Long reviewId, Pageable pageable);
 

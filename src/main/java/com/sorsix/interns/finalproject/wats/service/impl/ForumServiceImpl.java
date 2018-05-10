@@ -20,6 +20,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ForumServiceImpl implements ForumService {
@@ -82,15 +83,19 @@ public class ForumServiceImpl implements ForumService {
     @Override
     @Transactional
     public boolean postLikeForAnswer(ForumAnswer answer, User user) {
-        boolean res = answer.getLikes().add(user);
-        if (res) {
-            LOGGER.info("Posted like for comment with id: {}, from user with id: {}",
+        Set<User> users = answer.getLikes();
+        boolean liked = users.contains(user);
+        if (!liked) {
+users.remove(user);
+            LOGGER.info("Removed like for answer with id: {}, from user with id: {}",
                     answer.getId(), user.getId());
+            
         } else {
-            LOGGER.info("Removed like for comment with id: {}, from user with id: {}",
+            users.add(user);
+            LOGGER.info("Posted like for answer with id: {}, from user with id: {}",
                     answer.getId(), user.getId());
         }
-        return res;
+        return !liked;
     }
 
     @Override

@@ -95,11 +95,10 @@ public class ReviewServiceImpl implements ReviewService {
     public boolean postLikeForReview(Review review, User user) {
         boolean liked = postLike(review.getLikes(), user);
         if (!liked) {
-		LOGGER.info("Removed like for review with id: {}, from user with id: {}",
-                    review.getId(), user.getId());
-            
-        } else {
             LOGGER.info("Posted like for review with id: {}, from user with id: {}",
+                    review.getId(), user.getId());
+        } else {
+            LOGGER.info("Removed like for review with id: {}, from user with id: {}",
                     review.getId(), user.getId());
         }
         return liked;
@@ -110,12 +109,11 @@ public class ReviewServiceImpl implements ReviewService {
     public boolean postLikeForReviewComment(ReviewComment comment, User user) {
         boolean liked = postLike(comment.getLikes(), user);
         if (!liked) {
-	    LOGGER.info("Removed like for comment with id: {}, from user with id: {}",
-                comment.getId(), user.getId());    
+            LOGGER.info("Posted like for comment with id: {}, from user with id: {}",
+                    comment.getId(), user.getId());
         } else {
-	    LOGGER.info("Posted like for comment with id: {}, from user with id: {}",
-                comment.getId(), user.getId());	
-            
+            LOGGER.info("Removed like for comment with id: {}, from user with id: {}",
+                    comment.getId(), user.getId());
         }
         return liked;
     }
@@ -123,8 +121,10 @@ public class ReviewServiceImpl implements ReviewService {
     private boolean postLike(Set<User> likers, User user) {
         boolean liked = likers.contains(user);
         if (liked) likers.remove(user);
-	else  likers.add(user);
-	return !liked;
+	else 
+		 likers.add(user) likers.add(user);
+		return true;		
+	}
     }
 
 }
