@@ -14,8 +14,8 @@ public class Location {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "location")
-    public Collection<Review> reviews;
+   // @OneToMany(mappedBy = "location")
+   // public Collection<Review> reviews;
 
     public Location() {}
 

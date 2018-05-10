@@ -4,6 +4,7 @@ import com.sorsix.interns.finalproject.wats.api.exception.LocationNotFoundExcept
 import com.sorsix.interns.finalproject.wats.api.exception.ReviewCommentNotFoundException;
 import com.sorsix.interns.finalproject.wats.api.exception.ReviewNotFoundException;
 import com.sorsix.interns.finalproject.wats.domain.User;
+import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
 import com.sorsix.interns.finalproject.wats.service.AuthenticationService;
@@ -32,6 +33,12 @@ public class ReviewController {
         this.reviewService = reviewService;
         this.authenticationService = authenticationService;
         this.locationService = locationService;
+    }
+
+    @GetMapping("public/locations/{id}")
+    public Location getLocation(@PathVariable Long id) {
+        return locationService.findLocation(id)
+                .orElseThrow(() -> new LocationNotFoundException(id));
     }
 
     @GetMapping("public/locations/{locationId}/reviews/{reviewId}")
