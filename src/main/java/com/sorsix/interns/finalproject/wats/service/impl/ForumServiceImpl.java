@@ -85,8 +85,8 @@ public class ForumServiceImpl implements ForumService {
     public boolean postLikeForAnswer(ForumAnswer answer, User user) {
         Set<User> users = answer.getLikes();
         boolean liked = users.contains(user);
-        if (!liked) {
-users.remove(user);
+        if (liked) {
+            users.remove(user);
             LOGGER.info("Removed like for answer with id: {}, from user with id: {}",
                     answer.getId(), user.getId());
             

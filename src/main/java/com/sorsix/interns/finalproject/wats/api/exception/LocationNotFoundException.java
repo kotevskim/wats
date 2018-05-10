@@ -5,4 +5,8 @@ public class LocationNotFoundException extends RuntimeException implements NotFo
     public LocationNotFoundException(Long id) {
         super("Location with id: " + id + " does not exist");
     }
+
+    public LocationNotFoundException(String name) {
+        super("Location with name: " + name + " does not exist");
+    }
 }

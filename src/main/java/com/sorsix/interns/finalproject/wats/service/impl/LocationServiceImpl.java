@@ -6,6 +6,7 @@ import com.sorsix.interns.finalproject.wats.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -21,5 +22,10 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Optional<Location> findLocation(Long id) {
         return this.locationDAO.findById(id);
+    }
+
+    @Override
+    public Collection<Location> findLocationByNameLike(String name) {
+        return this.locationDAO.findByNameContaining(name);
     }
 }

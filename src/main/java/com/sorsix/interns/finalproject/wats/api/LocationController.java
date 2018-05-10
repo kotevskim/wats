@@ -4,10 +4,9 @@ import com.sorsix.interns.finalproject.wats.api.exception.LocationNotFoundExcept
 import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/api")
@@ -24,5 +23,10 @@ public class LocationController {
     public Location getLocation(@PathVariable Long id) {
         return locationService.findLocation(id)
                 .orElseThrow(() -> new LocationNotFoundException(id));
+    }
+
+    @GetMapping("public/locations")
+    public Collection<Location> getLocationByNameLike(@RequestParam String name) {
+        return locationService.findLocationByNameLike(name);
     }
 }
