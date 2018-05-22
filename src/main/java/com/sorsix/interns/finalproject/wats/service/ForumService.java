@@ -28,7 +28,13 @@ public interface ForumService {
 
     Collection<ForumAnswer> getTopAnswersForQuestion(Long questionId, int quantity);
 
-    boolean postLikeForAnswer(ForumAnswer answer, User user);
-
     Collection<User> mapAnswerLikesToUsers(ForumAnswer anser);
+
+    boolean hasUserLikedForumAnswer(Long userId, Long answerId);
+
+    void likeForumAnswer(Long userId, Long answerId);
+
+    void dislikeForumAnswer(Long userId, Long answerId);
+
+
 }

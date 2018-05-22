@@ -10,4 +10,5 @@ public class WatsApplication {
 		SpringApplication.run(WatsApplication.class, args);
 	}
 
+	//TODO: change varhcar to text in db_ddl
 }

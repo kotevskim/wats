@@ -22,6 +22,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2SuccessHandler.class);
 
+    private static String CLIENT_BASE_API = "http://localhost:4200/";
     private final JwtUtil jwtUtil;
     private final SsoIdentityService ssoIdentityService;
     private final UserService userService;
@@ -77,7 +78,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // TODO add authorities to claims based on some logic...
         String jwtToken = jwtUtil.generateToken(claims);
         response.addHeader(jwtUtil.getHeaderString(), jwtUtil.getTokenPrefix() + jwtToken);
-        response.sendRedirect("http://localhost:4200/token?jwt=" + jwtToken);
+        response.sendRedirect(CLIENT_BASE_API + "token?jwt=" + jwtToken);
 
         LOGGER.info("Authentication successful for user [id: {}, username: {}, email: {}] ; provider: {}",
                 user.getId(), username, email, provider);

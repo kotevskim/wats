@@ -81,26 +81,30 @@ public class ForumServiceImpl implements ForumService {
     }
 
     @Override
-    @Transactional
-    public boolean postLikeForAnswer(ForumAnswer answer, User user) {
-        Set<User> users = answer.getLikes();
-        boolean liked = users.contains(user);
-        if (liked) {
-            users.remove(user);
-            LOGGER.info("Removed like for answer with id: {}, from user with id: {}",
-                    answer.getId(), user.getId());
-            
-        } else {
-            users.add(user);
-            LOGGER.info("Posted like for answer with id: {}, from user with id: {}",
-                    answer.getId(), user.getId());
-        }
-        return !liked;
-    }
-
-    @Override
     public Collection<User> mapAnswerLikesToUsers(ForumAnswer answer) {
         return answer.getLikes();
     }
+
+    @Override
+    public boolean hasUserLikedForumAnswer(Long userId, Long answerId) {
+        return forumAnswerDAO.existsUserLikeForForumAnswer(userId, answerId);
+    }
+
+    @Override
+    @Transactional
+    public void likeForumAnswer(Long userId, Long answerId) {
+        forumAnswerDAO.postLikeForForumAnswer(userId, answerId);
+        LOGGER.info("Posted like for forum answer with id: {}, from user with id: {}",
+                answerId, userId);
+    }
+
+    @Override
+    @Transactional
+    public void dislikeForumAnswer(Long userId, Long answerId) {
+        forumAnswerDAO.removeLikeForForumAnswer(userId, answerId);
+        LOGGER.info("Removed like for forum answer with id: {}, from user with id: {}",
+                answerId, userId);
+    }
+
 
 }

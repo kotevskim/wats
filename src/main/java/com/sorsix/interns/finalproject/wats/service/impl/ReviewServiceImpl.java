@@ -2,7 +2,6 @@ package com.sorsix.interns.finalproject.wats.service.impl;
 
 import com.sorsix.interns.finalproject.wats.domain.Location;
 import com.sorsix.interns.finalproject.wats.domain.User;
-import com.sorsix.interns.finalproject.wats.domain.UserDTO;
 import com.sorsix.interns.finalproject.wats.domain.review.Review;
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
 import com.sorsix.interns.finalproject.wats.persistence.ReviewCommentDAO;
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -91,40 +89,44 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    @Transactional
-    public boolean postLikeForReview(Review review, User user) {
-        boolean liked = postLike(review.getLikes(), user);
-        if (!liked) {
-		LOGGER.info("Removed like for review with id: {}, from user with id: {}",
-                    review.getId(), user.getId());
-            
-        } else {
-            LOGGER.info("Posted like for review with id: {}, from user with id: {}",
-                    review.getId(), user.getId());
-        }
-        return liked;
+    public boolean hasUserLikedReview(Long userId, Long reviewId) {
+        return reviewDAO.existsUserLikeForReview(userId, reviewId);
+    }
+
+    @Override
+    public boolean hasUserLikedReviewComment(Long userId, Long commentId) {
+        return reviewCommentDAO.existsUserLikeForReviewComment(userId, commentId);
     }
 
     @Override
     @Transactional
-    public boolean postLikeForReviewComment(ReviewComment comment, User user) {
-        boolean liked = postLike(comment.getLikes(), user);
-        if (!liked) {
-	    LOGGER.info("Removed like for comment with id: {}, from user with id: {}",
-                comment.getId(), user.getId());    
-        } else {
-	    LOGGER.info("Posted like for comment with id: {}, from user with id: {}",
-                comment.getId(), user.getId());	
-            
-        }
-        return liked;
+    public void likeReview(Long userId, Long reviewId) {
+        reviewDAO.postLikeForReview(userId, reviewId);
+        LOGGER.info("Posted like for review with id: {}, from user with id: {}",
+                reviewId, userId);
     }
 
-    private boolean postLike(Set<User> likers, User user) {
-        boolean liked = likers.contains(user);
-        if (liked) likers.remove(user);
-	else  likers.add(user);
-	return !liked;
+    @Override
+    @Transactional
+    public void dislikeReview(Long userId, Long reviewId) {
+        reviewDAO.removeLikeForReview(userId, reviewId);
+        LOGGER.info("Removed like for review with id: {}, from user with id: {}",
+                reviewId, userId);
     }
 
+    @Override
+    @Transactional
+    public void likeReviewComment(Long userId, Long commentId) {
+        reviewCommentDAO.postLikeForReviewComment(userId, commentId);
+        LOGGER.info("Posted like for review comment with id: {}, from user with id: {}",
+                commentId, userId);
+    }
+
+    @Override
+    @Transactional
+    public void dislikeReviewComment(Long userId, Long commentId) {
+        reviewCommentDAO.removeLikeForReviewComment(userId, commentId);
+        LOGGER.info("Removed like for review comment with id: {}, from user with id: {}",
+                commentId, userId);
+    }
 }

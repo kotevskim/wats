@@ -12,15 +12,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class MyControllerAdvice {
 
     @ExceptionHandler({
-            ReviewNotFoundException.class,
-            ReviewCommentNotFoundException.class,
-            ForumQuestionNotFoundException.class,
-            ForumAnswerNotFoundException.class,
-            LocationNotFoundException.class
+            EntityNotFoundException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    VndErrors.VndError entityNotFoundExceptionHandler(NotFoundException ex) {
+    VndErrors.VndError entityNotFoundExceptionHandler(EntityNotFoundException ex) {
         return new VndErrors.VndError("error", ex.getMessage());
     }
 

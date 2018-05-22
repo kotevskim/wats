@@ -30,7 +30,15 @@ public interface ReviewService {
 
     ReviewComment createReviewComment(User user, Review review, String description);
 
-    boolean postLikeForReview(Review review, User user);
+    boolean hasUserLikedReview(Long userId, Long reviewId);
 
-    boolean postLikeForReviewComment(ReviewComment comment, User user);
+    boolean hasUserLikedReviewComment(Long userId, Long commentId);
+
+    void likeReview(Long userId, Long reviewId);
+
+    void dislikeReview(Long userId, Long reviewId);
+
+    void likeReviewComment(Long userId, Long commentId);
+
+    void dislikeReviewComment(Long userId, Long commentId);
 }

@@ -2,6 +2,7 @@ package com.sorsix.interns.finalproject.wats.persistence;
 
 import com.sorsix.interns.finalproject.wats.domain.review.ReviewComment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
@@ -37,10 +38,27 @@ public interface ReviewCommentDAO extends JpaRepository<ReviewComment, Long> {
                     "ORDER BY temp_result.num_likes DESC\n" +
                     "LIMIT ?2",
             nativeQuery = true)
-    Collection<ReviewComment> findTopByQuestionId(long reviewId, int size);
+    Collection<ReviewComment> findTopByQuestionId(long commentId, int size);
 
     @Deprecated
     @Query(value = "SELECT u.id, u.name, u.username FROM users u JOIN review_comment_likes rcl ON u.id = rcl.user_id WHERE rcl.comment_id = ?1",
             nativeQuery = true)
     Collection<Map<String, Object>> mapReviewCommentLikesToUsers(Long commentId);
+
+    /**
+     * @param userId
+     * @param commentId
+     * @return true if the user has liked the comment, false otherwise.
+     */
+    @Query(value = "SELECT EXISTS (SELECT FROM review_comment_likes rcl WHERE rcl.user_id = ?1 AND rcl.comment_id = ?2)",
+            nativeQuery = true)
+    Boolean existsUserLikeForReviewComment(Long userId, Long commentId);
+
+    @Modifying
+    @Query(value = "INSERT INTO review_comment_likes VALUES (?1, ?2)", nativeQuery = true)
+    void postLikeForReviewComment(Long userId, Long commentId);
+
+    @Modifying
+    @Query(value = "DELETE FROM review_comment_likes WHERE user_id = ?1 AND comment_id = ?2", nativeQuery = true)
+    void removeLikeForReviewComment(Long userId, Long commentId);
 }

@@ -4,6 +4,7 @@ import com.sorsix.interns.finalproject.wats.domain.forum.ForumAnswer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,9 +13,8 @@ import java.util.Collection;
 
 @Repository
 public interface ForumAnswerDAO extends JpaRepository<ForumAnswer, Long> {
+
     Page<ForumAnswer> findAllByForumQuestionId(long questionId, Pageable pageable);
-
-
 
 //    @Query(value = "SELECT COUNT(*) FROM (SELECT a.* from forum_answers a " +
 //            "JOIN forum_answer_likes fal ON a.id=fal.forum_answer_id) foo GROUP BY foo.forum_question_id",
@@ -45,4 +45,21 @@ public interface ForumAnswerDAO extends JpaRepository<ForumAnswer, Long> {
                     "LIMIT ?2",
             nativeQuery = true)
         Collection<ForumAnswer> findTopByQuestionId(@Param("questionId") long questionId, @Param("numItems") int numItems);
+
+    /**
+     * @param userId
+     * @param answerId
+     * @return true if the user has liked the answer, false otherwise.
+     */
+    @Query(value = "SELECT EXISTS (SELECT FROM forum_answer_likes fal WHERE fal.user_id = ?1 AND fal.forum_answer_id = ?2)",
+            nativeQuery = true)
+    Boolean existsUserLikeForForumAnswer(Long userId, Long answerId);
+
+    @Modifying
+    @Query(value = "INSERT INTO forum_answer_likes VALUES (?1, ?2)", nativeQuery = true)
+    void postLikeForForumAnswer(Long userId, Long answerId);
+
+    @Modifying
+    @Query(value = "DELETE FROM forum_answer_likes WHERE user_id = ?1 AND forum_answer_id = ?2", nativeQuery = true)
+    void removeLikeForForumAnswer(Long userId, Long answerId);
 }
