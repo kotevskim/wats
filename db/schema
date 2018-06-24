@@ -1,0 +1,18 @@
+MILESTONE 1:
+USER(id, first_name, last_name, picture_url, current_place*, oauth2_id)
+
+REVIEW(id, description, date_published, user_id*, place_id*)
+
+REVIEW_COMMENT(id, description, date_published, user_id*, review_id*)
+
+
+
+
+MILESTONE 2:
+FORUM_ITEM(id, description, date_published, user_id*, place_id*, reply_to*)
+
+AD(id, description, date_published, user_id*, place_id*)
+
+HAPPENING(id, description, location, time, user_id*, place_id*)
+
+Place(id, name, state)

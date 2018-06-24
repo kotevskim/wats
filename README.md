@@ -10,12 +10,12 @@
 `GET` /api/public/locations/{locationId}/reviews?page=0&size=20&sort=id,asc  
 
 `GET` /api/public/locations/{locationId}/reviews/{reviewId}/comments?page=0&size=20&sort=id,asc  
-`GET` /api/public/locations/{locationId}/reviews/{reviewId}/top-comments?limit=3
+`GET` /api/public/locations/{locationId}/reviews/{reviewId}/top-comments?limit=3  
     
 `GET` /api/public/locations/{locationId}/reviews/{reviewId}/likes    
 `GET` /api/public/locations/{locationId}/reviews/{reviewId}/comments/{commendId}/likes  
 
-`POST` /api/locations/{locationId}/reviews ; request body: {"description":""}
+`POST` /api/locations/{locationId}/reviews ; request body: {"description":""}  
 `POST` /api/locations/{locationId}/reviews/{reviewId}/comments ; request body: {"description":""}   
 `POST` /api/locations/{locationId}/reviews/{reviewId}/likes  
 `POST` /api/locations/{locationId}/reviews/{reviewId}/comments/{commentId}/likes    
